@@ -9,16 +9,15 @@ CXXFLAGS+=-O3 -std=c++11
 # CXXFLAGS+=-Wall -fdiagnostics-color=auto -std=c++11 -fext-numeric-literals -O2 -pthread -fopenmp -Wl,-rpath-link=/home/ck/work/am_msk/libs/lib
 # CXXFLAGS+=-Wall -fdiagnostics-color=auto -std=c++11 -fext-numeric-literals -O2 -pthread -fopenmp -Wl,-rpath-link=/home/ck/work/am_msk/libs/lib
 
-ARM_CXX=/home/ck/work/am_msk/cross-pi-gcc-8.3.0-2/bin/arm-linux-gnueabihf-g++
 PC_CXX=g++
 
 CXX=$(PC_CXX)
 
 LDLIBS=-lm -lfftw3f -lopenblas
 
-# LDPATH+=-L/home/ck/work/am_msk/libs/lib
+# LDPATH+=-L/usr/local/lib
 
-# INCLUDEPATH+=-I /home/ck/work/am_msk/libs/include
+# INCLUDEPATH+=-I /usr/local/include
 
 
 # test:
