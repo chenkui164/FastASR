@@ -1,6 +1,5 @@
 # FastASR
 基于PaddleSpeech所使用的conformer模型，使用C++的高效实现模型推理，在树莓派4B等ARM平台运行也可流畅运行。
-[toc]
 
 ## 项目简介
 本项目仅实现了PaddleSpeech [r1.01版本](https://github.com/PaddlePaddle/PaddleSpeech/releases/tag/r1.0.1)中conformer_wenetspeech-zh-16k预训练模型。
