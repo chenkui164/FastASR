@@ -21,13 +21,13 @@ void SubDecoder::forward(Tensor<float> *din, Tensor<int> *din_mask,
     Tensor<float> residual(din);
     norm1->forward(din);
 
-    self_attn->forward(din, din, din, din_mask, din);
+    self_attn->forward(din, din, din, din_mask);
 
     din->add(1, &residual);
     residual.reload(din);
     norm2->forward(din);
 
-    src_attn->forward(din, encoder_out, encoder_out, encoder_mask, din);
+    src_attn->forward(din, encoder_out, encoder_out, encoder_mask);
     // encoder_mask->disp();
 
     din->add(1, &residual);

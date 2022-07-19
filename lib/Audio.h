@@ -8,8 +8,6 @@
 #include "FeatureQueue.h"
 #include "Tensor.h"
 
-
-
 class Audio {
   private:
     int16_t *speech_data;
@@ -18,12 +16,12 @@ class Audio {
     int16_t sample_rate;
     int offset;
 
-    void loadwav(const char *filename);
-
   public:
-    Audio(const char *filename);
+    Audio();
     ~Audio();
+    void loadwav(const char *filename);
     SpeechFlag fetch_chunck(int16_t *&dout, int len);
+    SpeechFlag fetch(int16_t *&dout, int &len);
 };
 
 #endif

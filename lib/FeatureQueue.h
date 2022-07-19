@@ -14,10 +14,13 @@ class FeatureQueue {
     queue<Tensor<float> *> feature_queue;
     Tensor<float> *buff;
     int buff_idx;
+    int window_size;
 
   public:
     FeatureQueue();
     ~FeatureQueue();
+    void reinit(int size);
+    void reset();
     void push(float *din, SpeechFlag flag);
     Tensor<float> *pop();
     int size();

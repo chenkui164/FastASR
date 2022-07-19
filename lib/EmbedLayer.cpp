@@ -16,31 +16,12 @@ EmbedLayer::~EmbedLayer()
 {
 }
 
-void EmbedLayer::forward(Tensor<float> *din, Tensor<float> *&dout)
+void EmbedLayer::forward(Tensor<float> *&din)
 {
-    Tensor<float> *conv0_out;
-    Tensor<float> *conv1_out;
-
-    conv0_forward(din, conv0_out);
-    conv1_forward(conv0_out, conv1_out);
-    linear_out_forward(conv1_out, dout);
-    // cout << "test4" << endl;
-
-    // dout_h = conv1_column;
-    // dout_w = conv1_row;
-
-
-    // cout << "test5" << endl;
+    conv0_forward(din);
+    conv1_forward(din);
+    linear_out_forward(din);
 }
-
-// void EmbedLayer::init(int width, int hight)
-// {
-//     get_conv_ind(1, row, column, 3, 2, conv0_row, conv0_column, conv0_idxs);
-//     get_conv_ind(0, conv0_row, conv0_column, 3, 2, conv1_row, conv1_column,
-//                  conv1_idxs);
-//     conv0_size = conv0_row * conv0_column;
-//     conv1_size = conv1_row * conv1_column;
-// }
 
 void EmbedLayer::get_conv_ind(int trans, int in_row, int in_column, int kernel,
                               int stride, int &out_row, int &out_column,
@@ -99,7 +80,7 @@ void EmbedLayer::get_conv_ind(int trans, int in_row, int in_column, int kernel,
     }
 }
 
-void EmbedLayer::conv0_forward(Tensor<float> *din, Tensor<float> *&dout)
+void EmbedLayer::conv0_forward(Tensor<float> *&din)
 {
 
     int row = din->size[2];
@@ -115,13 +96,14 @@ void EmbedLayer::conv0_forward(Tensor<float> *din, Tensor<float> *&dout)
     Tensor<float> blas_in(conv0_size, 9);
     Tensor<float> blas_out(conv0_size, 512);
 
-    dout = new Tensor<float>(512, conv0_row, conv0_column);
-
     int i;
     for (i = 0; i < blas_in.buff_size; i++) {
         int ii = conv0_idxs[i];
         blas_in.buff[i] = din->buff[ii];
     }
+
+    delete din;
+    din = new Tensor<float>(512, conv0_row, conv0_column);
 
     for (i = 0; i < conv0_size; i++) {
         int offset = i * 512;
@@ -136,13 +118,13 @@ void EmbedLayer::conv0_forward(Tensor<float> *din, Tensor<float> *&dout)
         int ii = i % 512;
         int jj = i / 512;
         int kk = ii * conv0_size + jj;
-        dout->buff[kk] = blas_out.buff[i] > 0 ? blas_out.buff[i] : 0;
+        din->buff[kk] = blas_out.buff[i] > 0 ? blas_out.buff[i] : 0;
     }
 
     free(conv0_idxs);
 }
 
-void EmbedLayer::conv1_forward(Tensor<float> *din, Tensor<float> *&dout)
+void EmbedLayer::conv1_forward(Tensor<float> *&din)
 {
 
     int row = din->size[2];
@@ -181,18 +163,19 @@ void EmbedLayer::conv1_forward(Tensor<float> *din, Tensor<float> *&dout)
                     512);
     }
 
-    dout = new Tensor<float>(512, conv_row, conv_column);
+    delete din;
+    din = new Tensor<float>(512, conv_row, conv_column);
 
     for (i = 0; i < blas_out.buff_size; i++) {
         int ii = i / (conv_column * 512);
         int jj = (i % (conv_column * 512)) / 512;
         int kk = i % 512;
         int mm = jj * conv_row * 512 + conv_row * kk + ii;
-        dout->buff[mm] = blas_out.buff[i] > 0 ? blas_out.buff[i] : 0;
+        din->buff[mm] = blas_out.buff[i] > 0 ? blas_out.buff[i] : 0;
     }
 }
 
-void EmbedLayer::linear_out_forward(Tensor<float> *din, Tensor<float> *&dout)
+void EmbedLayer::linear_out_forward(Tensor<float> *&din)
 {
 
     int Tmax = din->size[3];
@@ -201,7 +184,7 @@ void EmbedLayer::linear_out_forward(Tensor<float> *din, Tensor<float> *&dout)
     int tmp = 0x41b504f3;
     float scale = *((float *)&tmp);
 
-    dout = new Tensor<float>(Tmax, 512);
+    Tensor<float> *dout = new Tensor<float>(Tmax, 512);
 
     int i;
     for (i = 0; i < Tmax; i++) {
@@ -212,4 +195,6 @@ void EmbedLayer::linear_out_forward(Tensor<float> *din, Tensor<float> *&dout)
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, Tmax, 512,
                 512 * Fmax, scale, din->buff, 512 * Fmax, params->out0_weight,
                 512, scale, dout->buff, 512);
+    delete din;
+    din = dout;
 }

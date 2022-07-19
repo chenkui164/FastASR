@@ -12,25 +12,9 @@ DecSelfAttn::~DecSelfAttn()
 
 extern void linear_forward(Tensor<float> *din, Tensor<float> *dout,
                            float *weight, float *bias);
-// {
-//     int mm = din->buff_size / 512;
-//     int i;
-//     if (bias != 0) {
-//         for (i = 0; i < mm; i++) {
-//             int offset = i * 512;
-//             memcpy(dout->buff + offset, bias, sizeof(float) * 512);
-//         }
-//     } else {
-//         dout->zeros();
-//     }
 
-//     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, mm, 512, 512, 1,
-//                 din->buff, 512, weight, 512, 1, dout->buff, 512);
-// }
-
-void DecSelfAttn::forward(Tensor<float> *query, Tensor<float> *key,
-                          Tensor<float> *value, Tensor<int> *mask,
-                          Tensor<float> *dout)
+void DecSelfAttn::forward(Tensor<float> *&query, Tensor<float> *key,
+                          Tensor<float> *value, Tensor<int> *mask)
 {
 
     Tensor<float> q(query->size[1], query->size[2], 8, query->size[3] / 8);
@@ -43,8 +27,6 @@ void DecSelfAttn::forward(Tensor<float> *query, Tensor<float> *key,
 
     linear_forward(value, &v, params->linear_v_weight, params->linear_v_bias);
 
-    // SaveDataFile("/home/ck/matlab/conformer/test.bin", v.buff,
-    //              v.buff_size * sizeof(float));
 
     int n_batch = q.size[0];
     int n_head = 8;
@@ -52,8 +34,9 @@ void DecSelfAttn::forward(Tensor<float> *query, Tensor<float> *key,
     int n_key = k.size[1];
 
     Tensor<float> attn(1, 1, n_query, n_key);
-    // attn.shape();
-    dout->zeros();
+    Tensor<float> linear_in(query->size[0], query->size[1], query->size[2],
+                            query->size[3]);
+    linear_in.zeros();
 
     int i, j;
     for (i = 0; i < n_batch; i++) {
@@ -78,19 +61,19 @@ void DecSelfAttn::forward(Tensor<float> *query, Tensor<float> *key,
 
             cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, attn.size[2],
                         v.size[3], attn.size[3], 1, attn.buff, attn.size[3],
-                        v.buff + k_offset, 512, 1, dout->buff + q_offset, 512);
+                        v.buff + k_offset, 512, 1, linear_in.buff + q_offset,
+                        512);
         }
     }
 
-    Tensor<float> linear_in(dout);
-    int mm = dout->buff_size / 512;
+    int mm = query->buff_size / 512;
     for (i = 0; i < mm; i++) {
         int offset = i * 512;
-        memcpy(dout->buff + offset, params->linear_out_bias,
+        memcpy(query->buff + offset, params->linear_out_bias,
                sizeof(float) * 512);
     }
 
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, mm, 512, 512, 1,
                 linear_in.buff, 512, params->linear_out_weight, 512, 1,
-                dout->buff, 512);
+                query->buff, 512);
 }

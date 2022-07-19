@@ -4,7 +4,7 @@
 #include "FeedForward.h"
 #include "LayerNorm.h"
 
-SubEncoder::SubEncoder(SubEncoderParams *params) : params(params)
+SubEncoder::SubEncoder(SubEncoderParams *params, int mode) : params(params)
 {
     in_cache = new Tensor<float>(1024, 512);
     in_cache->resize(1, 1, 0, 512);
@@ -17,16 +17,21 @@ SubEncoder::SubEncoder(SubEncoderParams *params) : params(params)
     feedforward_macron = new FeedForward(&params->feedforward_macaron, 1);
     feedforward = new FeedForward(&params->feedforward, 1);
     self_attn = new EncSelfAttn(&params->self_attn);
-    conv_module = new ConvModule(&params->conv_module);
+    conv_module = new ConvModule(&params->conv_module, mode);
 }
 
 SubEncoder::~SubEncoder()
 {
 }
 
+void SubEncoder::reset()
+{
+    in_cache->resize(1, 1, 0, 512);
+    conv_module->reset();
+}
+
 void SubEncoder::forward(Tensor<float> *din, Tensor<float> *pe)
 {
-    // in_cache->shape();
 
     Tensor<float> residual(din);
 
@@ -38,7 +43,7 @@ void SubEncoder::forward(Tensor<float> *din, Tensor<float> *pe)
     norm_mha->forward(din);
     int offset = in_cache->buff_size;
     in_cache->concat(din, 2);
-    self_attn->forward(din, in_cache, in_cache, pe, din);
+    self_attn->forward(din, in_cache, in_cache, pe);
     din->add(1, &residual);
 
     residual.reload(din);

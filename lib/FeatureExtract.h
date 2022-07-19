@@ -9,11 +9,11 @@
 #include "SpeechWrap.h"
 #include "Tensor.h"
 
-
 class FeatureExtract {
   private:
     SpeechWrap speech;
     FeatureQueue fqueue;
+    int mode;
 
     float *fft_input;
     fftwf_complex *fft_out;
@@ -24,10 +24,11 @@ class FeatureExtract {
     void global_cmvn(float *din);
 
   public:
-    FeatureExtract();
+    FeatureExtract(int mode);
     ~FeatureExtract();
     int size();
     int status();
+    void reset();
     void insert(short *din, int len, SpeechFlag flag);
     bool fetch(Tensor<float> *&dout);
 };

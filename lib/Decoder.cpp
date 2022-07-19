@@ -2,10 +2,10 @@
 #include "util.h"
 #include <cblas.h>
 #include <stdio.h>
-#define vocab_size 5538
 
-Decoder::Decoder(DecoderParams *params, PositionEncoding *pos_enc)
-    : params(params), pos_enc(pos_enc)
+Decoder::Decoder(DecoderParams *params, PositionEncoding *pos_enc,
+                 int vocab_size)
+    : params(params), pos_enc(pos_enc), vocab_size(vocab_size)
 {
     embed = new DecEmbedLayer(params->embed_weight);
     int i;
@@ -19,8 +19,8 @@ Decoder::~Decoder()
 {
 }
 
-void Decoder::forward(Tensor<int> *&hyps_pad, Tensor<int> *&hyps_mask,
-                      Tensor<float> *&encoder_out, Tensor<int> *&encoder_mask,
+void Decoder::forward(Tensor<int> *hyps_pad, Tensor<int> *hyps_mask,
+                      Tensor<float> *encoder_out, Tensor<int> *encoder_mask,
                       Tensor<float> *&dout)
 {
     // printf("Decoder!!!!\n");
@@ -54,15 +54,17 @@ void Decoder::forward(Tensor<int> *&hyps_pad, Tensor<int> *&hyps_mask,
     mm = dout->buff_size / vocab_size;
     for (i = 0; i < mm; i++) {
         int offset = i * vocab_size;
-        memcpy(dout->buff + offset, params->output_bias, vocab_size * sizeof(float));
+        memcpy(dout->buff + offset, params->output_bias,
+               vocab_size * sizeof(float));
     }
 
-    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, mm, vocab_size, 512, 1,
-                embed_out->buff, 512, params->output_weight, vocab_size, 1,
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, mm, vocab_size, 512,
+                1, embed_out->buff, 512, params->output_weight, vocab_size, 1,
                 dout->buff, vocab_size);
 
     for (i = 0; i < mm; i++) {
         int offset = i * vocab_size;
         log_softmax(dout->buff + offset, vocab_size);
     }
+    delete embed_out;
 }

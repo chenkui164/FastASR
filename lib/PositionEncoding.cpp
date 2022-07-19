@@ -29,8 +29,8 @@ PositionEncoding::~PositionEncoding()
 
 void PositionEncoding::fetch(int size, Tensor<float> *&out)
 {
-    out = new Tensor<float>(size, 512);
-    memcpy(out->buff, pos_enc->buff, out->buff_size * sizeof(float));
+    // out = new Tensor<float>(size, 512);
+    // memcpy(out->buff, pos_enc->buff, out->buff_size * sizeof(float));
     out = pos_enc;
     out->resize(1, 1, size, 512);
 }

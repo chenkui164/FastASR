@@ -43,6 +43,7 @@ class CTCdecode {
   private:
     float *ctc_weight;
     float *ctc_bias;
+    int vocab_size;
 
     set<PathProb, path_cmp> curr_hyps_set;
     deque<PathProb> hyps;
@@ -50,10 +51,11 @@ class CTCdecode {
     int abs_time_step;
 
   public:
-    CTCdecode(float *ctc_weight, float *ctc_bias);
+    CTCdecode(float *ctc_weight, float *ctc_bias, int vocab_size);
     ~CTCdecode();
     void forward(Tensor<float> *din);
     void show_hyps();
+    void reset();
     vector<int> get_one_best_hyps();
 
     deque<PathProb> get_hyps();

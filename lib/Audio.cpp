@@ -7,19 +7,25 @@
 #include <string.h>
 using namespace std;
 
-Audio::Audio(const char *filename)
+Audio::Audio()
 {
-    loadwav(filename);
-    offset = 0;
+    speech_data = NULL;
 }
 
 Audio::~Audio()
 {
-    free(speech_data);
+    if (speech_data != NULL) {
+        free(speech_data);
+    }
 }
 
 void Audio::loadwav(const char *filename)
 {
+
+    if (speech_data != NULL) {
+        free(speech_data);
+    }
+    offset = 0;
 
     FILE *fp;
     fp = fopen(filename, "rb");
@@ -33,7 +39,6 @@ void Audio::loadwav(const char *filename)
     speech_data = (int16_t *)malloc(sizeof(int16_t) * speech_align_len);
     memset(speech_data, 0, sizeof(int16_t) * speech_align_len);
     int ret = fread(speech_data, sizeof(int16_t), speech_len, fp);
-
     fclose(fp);
 }
 
@@ -51,4 +56,12 @@ SpeechFlag Audio::fetch_chunck(int16_t *&dout, int len)
         offset += len;
         return S_MIDDLE;
     }
+}
+
+SpeechFlag Audio::fetch(int16_t *&dout, int &len)
+{
+    dout = speech_data;
+    len = speech_len;
+    offset = speech_len;
+    return S_END;
 }

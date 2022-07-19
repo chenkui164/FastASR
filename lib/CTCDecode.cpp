@@ -8,23 +8,27 @@
 #include <string.h>
 using namespace std;
 
-#define vocab_size 5538
-
-CTCdecode::CTCdecode(float *ctc_weight, float *ctc_bias)
-    : ctc_weight(ctc_weight), ctc_bias(ctc_bias)
+CTCdecode::CTCdecode(float *ctc_weight, float *ctc_bias, int vocab_size)
+    : ctc_weight(ctc_weight), ctc_bias(ctc_bias), vocab_size(vocab_size)
 {
+    reset();
+}
 
+CTCdecode::~CTCdecode()
+{
+}
+
+void CTCdecode::reset()
+{
+    curr_hyps_set.clear();
     PathProb tmp;
     tmp.pb = 0;
     tmp.prob = 0;
     tmp.v_s = 0;
     tmp.v_ns = 0;
     curr_hyps_set.insert(tmp);
-    abs_time_step = 0;
-}
 
-CTCdecode::~CTCdecode()
-{
+    abs_time_step = 0;
 }
 
 float log_add(float *din, int len)
@@ -166,7 +170,7 @@ void CTCdecode::ctc_beam_search(Tensor<float> *din)
             }
         }
         // kaishi
-        float min = -9999999;
+        float min = -INFINITY;
         int ii = 0;
         curr_hyps_set.clear();
         for (auto map_it = next_next_map.begin(); map_it != next_next_map.end();
@@ -193,13 +197,6 @@ void CTCdecode::ctc_beam_search(Tensor<float> *din)
     for (auto hyps_it = curr_hyps_set.begin(); hyps_it != curr_hyps_set.end();
          hyps_it++) {
         hyps.push_front(*hyps_it);
-        // int mm = hyps_it->prefix.size();
-        // cout << hyps_it->prefix.size() << endl;
-        // for (i = 0; i < mm; i++) {
-        //     printf("%d ", hyps_it->prefix[i]);
-        // }
-        // printf("\n");
-        // printf("%f %f %f\n\n", hyps_it->pb, hyps_it->pnb, hyps_it->prob);
     }
 }
 

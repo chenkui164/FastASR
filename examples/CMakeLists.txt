@@ -1,11 +1,24 @@
-add_executable(example_fastasr main.cpp)
 
 
 set(EXTRA_LIBS fastasr)
 set(EXTRA_INCLUDES ../lib)
-target_link_libraries(example_fastasr PUBLIC ${EXTRA_LIBS})
 
-target_include_directories(example_fastasr PUBLIC
+
+add_executable(fastasr_stream fastasr_stream.cpp)
+
+target_link_libraries(fastasr_stream PUBLIC ${EXTRA_LIBS})
+
+target_include_directories(fastasr_stream PUBLIC
+    "${PROJECT_BINARY_DIR}"
+    ${EXTRA_INCLUDES}
+    )
+
+
+add_executable(fastasr_cli fastasr_cli.cpp)
+
+target_link_libraries(fastasr_cli PUBLIC ${EXTRA_LIBS})
+
+target_include_directories(fastasr_cli PUBLIC
     "${PROJECT_BINARY_DIR}"
     ${EXTRA_INCLUDES}
     )

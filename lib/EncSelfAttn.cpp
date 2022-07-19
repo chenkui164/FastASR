@@ -32,8 +32,7 @@ void linear_forward(Tensor<float> *din, Tensor<float> *dout, float *weight,
 }
 
 void EncSelfAttn::forward(Tensor<float> *query, Tensor<float> *key,
-                          Tensor<float> *value, Tensor<float> *pe,
-                          Tensor<float> *dout)
+                          Tensor<float> *value, Tensor<float> *pe)
 {
     Tensor<float> q(query->size[2], 8, query->size[3] / 8);
     Tensor<float> k(key->size[2], 8, key->size[3] / 8);
@@ -90,7 +89,7 @@ void EncSelfAttn::forward(Tensor<float> *query, Tensor<float> *key,
         softmax(scores.buff + offset, scores.size[3], scores.size[3]);
     }
 
-    Tensor<float> tmp(dout->size[2], dout->size[3]);
+    Tensor<float> tmp(query->size[2], query->size[3]);
     tmp.zeros();
 
     for (i = 0; i < 8; i++) {
@@ -103,13 +102,13 @@ void EncSelfAttn::forward(Tensor<float> *query, Tensor<float> *key,
                     tmp.buff + offset2, 512);
     }
 
-    for (i = 0; i < dout->size[2]; i++) {
+    for (i = 0; i < query->size[2]; i++) {
         int offset = i * 512;
-        memcpy(dout->buff + offset, params->linear0.linear_out_bias,
+        memcpy(query->buff + offset, params->linear0.linear_out_bias,
                512 * sizeof(float));
     }
 
-    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, dout->size[2], 512,
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, query->size[2], 512,
                 512, 1, tmp.buff, 512, params->linear0.linear_out_weight, 512,
-                1, dout->buff, 512);
+                1, query->buff, 512);
 }

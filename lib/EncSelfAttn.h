@@ -17,8 +17,7 @@ class EncSelfAttn {
   public:
     EncSelfAttn(EncSelfAttnParams *params);
     ~EncSelfAttn();
-    void forward(Tensor<float> *query, Tensor<float> *key, Tensor<float> *value, Tensor<float> *pe,
-                 Tensor<float> *dout);
+    void forward(Tensor<float> *query, Tensor<float> *key, Tensor<float> *value, Tensor<float> *pe);
 };
 
 #endif

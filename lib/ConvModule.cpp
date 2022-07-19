@@ -19,11 +19,16 @@ void glu(Tensor<float> *din, Tensor<float> *dout)
     }
 }
 
-ConvModule::ConvModule(EncConvParams *params) : params(params)
+ConvModule::ConvModule(EncConvParams *params, int mode)
+    : params(params), mode(mode)
 {
     norm = new LayerNorm(&params->norm, 1e-5f);
     conv_cache = new Tensor<float>(14, 512);
+    reset();
+}
 
+void ConvModule::reset()
+{
     Tensor<float> tmp(14, 1024);
     int i, mm;
     for (i = 0; i < 14; i++) {
@@ -41,6 +46,15 @@ ConvModule::~ConvModule()
 
 void ConvModule::forward(Tensor<float> *din)
 {
+    if (mode == 0) {
+        forward_mode0(din);
+    } else {
+        forward_mode1(din);
+    }
+}
+
+void ConvModule::forward_mode0(Tensor<float> *din)
+{
     int mm = din->size[2];
     Tensor<float> tmp(mm, 1024);
     int i, j;
@@ -54,7 +68,57 @@ void ConvModule::forward(Tensor<float> *din)
                 din->buff, 512, params->pointwise_conv1_weight, 512, 1,
                 tmp.buff, 1024);
     glu(&tmp, din);
-    
+
+    Tensor<float> conv_in(1, mm + 14);
+    Tensor<float> blasin(mm, 15);
+    conv_in.zeros();
+
+    for (i = 0; i < 512; i++) {
+        for (j = 0; j < mm; j++) {
+            int ii = j * 512 + i;
+            conv_in.buff[j + 7] = din->buff[ii];
+            din->buff[ii] = params->depthwise_conv_bias[i];
+        }
+        for (j = 0; j < mm; j++) {
+            int offset = j * 15;
+            memcpy(blasin.buff + offset, conv_in.buff + j, 15 * sizeof(float));
+        }
+
+        cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, mm, 1, 15, 1,
+                    blasin.buff, 15, params->depthwise_conv_weight + i * 15, 1,
+                    1, din->buff + i, 512);
+    }
+
+    norm->forward(din);
+    swish(din);
+
+    Tensor<float> tmp2(din);
+    for (i = 0; i < mm; i++) {
+        int offset = i * 512;
+        memcpy(din->buff + offset, params->pointwise_conv2_bias,
+               sizeof(float) * 512);
+    }
+
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, mm, 512, 512, 1,
+                tmp2.buff, 512, params->pointwise_conv2_weight, 512, 1,
+                din->buff, 512);
+}
+
+void ConvModule::forward_mode1(Tensor<float> *din)
+{
+    int mm = din->size[2];
+    Tensor<float> tmp(mm, 1024);
+    int i, j;
+    for (i = 0; i < mm; i++) {
+        int offset = i * 1024;
+        memcpy(tmp.buff + offset, params->pointwise_conv1_bias,
+               sizeof(float) * 1024);
+    }
+
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, mm, 1024, 512, 1,
+                din->buff, 512, params->pointwise_conv1_weight, 512, 1,
+                tmp.buff, 1024);
+    glu(&tmp, din);
 
     Tensor<float> conv_in(1, mm + 14);
     Tensor<float> blasin(mm, 15);

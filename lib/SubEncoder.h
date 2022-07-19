@@ -5,12 +5,12 @@
 
 #include <stdint.h>
 
+#include "ConvModule.h"
 #include "EncSelfAttn.h"
 #include "FeedForward.h"
 #include "LayerNorm.h"
 #include "Tensor.h"
 #include "WenetParams.h"
-#include "ConvModule.h"
 
 class SubEncoder {
   private:
@@ -27,8 +27,9 @@ class SubEncoder {
     LayerNorm *norm_final;
 
   public:
-    SubEncoder(SubEncoderParams *params);
+    SubEncoder(SubEncoderParams *params, int mode);
     ~SubEncoder();
+    void reset();
     void forward(Tensor<float> *din, Tensor<float> *pe);
 };
 

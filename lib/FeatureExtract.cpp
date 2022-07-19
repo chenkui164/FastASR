@@ -10,7 +10,7 @@
 
 using namespace std;
 
-FeatureExtract::FeatureExtract()
+FeatureExtract::FeatureExtract(int mode) : mode(mode)
 {
     fftw_init();
 }
@@ -18,6 +18,13 @@ FeatureExtract::FeatureExtract()
 FeatureExtract::~FeatureExtract()
 {
 }
+
+void FeatureExtract::reset()
+{
+    speech.reset();
+    fqueue.reset();
+}
+
 int FeatureExtract::size()
 {
     return fqueue.size();
@@ -42,7 +49,10 @@ void FeatureExtract::insert(short *din, int len, SpeechFlag flag)
     speech.load(din, len);
     int i, j;
     float tmp_feature[80];
-    int ll = (speech.size() - 400) / 160;
+    if (mode == 0) {
+        int ll = (speech.size() - 400) / 160 + 1;
+        fqueue.reinit(ll);
+    }
 
     for (i = 0; i <= speech.size() - 400; i = i + window_shift) {
         float tmp_mean = 0;

@@ -18,6 +18,7 @@ class SpeechWrap {
     ~SpeechWrap();
     void load(int16_t *din, int len);
     void update(int offset);
+    void reset();
     int size();
     int16_t &operator[](int i);
 };

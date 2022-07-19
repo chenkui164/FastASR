@@ -11,6 +11,11 @@ SpeechWrap::~SpeechWrap()
 {
 }
 
+void SpeechWrap::reset()
+{
+    cache_size = 0;
+}
+
 void SpeechWrap::load(int16_t *din, int len)
 {
     in = din;

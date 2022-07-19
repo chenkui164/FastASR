@@ -40,9 +40,11 @@ class Model {
                     Tensor<float> *scorce);
 
   public:
-    Model(ModelConfig config);
+    Model(ModelConfig config, int mode);
     ~Model();
-    string forward(Tensor<float> *din, Tensor<float> *dout);
+    void reset();
+    string forward_chunk(Tensor<float> *din);
+    string forward(Tensor<float> *din);
     string rescoring();
 };
 

@@ -20,9 +20,10 @@ class Encoder {
     LayerNorm *after_norm;
 
   public:
-    Encoder(EncoderParams *params, PositionEncoding *pos_enc);
+    Encoder(EncoderParams *params, PositionEncoding *pos_enc, int mode);
     ~Encoder();
-    void forward(Tensor<float> *din, Tensor<float> *&dout);
+    void reset();
+    void forward(Tensor<float> *&din);
 };
 
 #endif

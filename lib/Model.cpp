@@ -27,7 +27,7 @@ void disp_params(float *din, int size)
     printf("\n");
 }
 
-Model::Model(ModelConfig cfg)
+Model::Model(ModelConfig cfg, int mode)
 {
 
     loadparams(cfg.wenet_path);
@@ -36,10 +36,10 @@ Model::Model(ModelConfig cfg)
     params_init();
 
     pos_enc = new PositionEncoding(5000);
-    encoder = new Encoder(&params.encoder, pos_enc);
+    encoder = new Encoder(&params.encoder, pos_enc, mode);
 
-    ctc = new CTCdecode(params.ctc_weight, params.ctc_bias);
-    decoder = new Decoder(&params.decoder, pos_enc);
+    ctc = new CTCdecode(params.ctc_weight, params.ctc_bias, vocab_size);
+    decoder = new Decoder(&params.decoder, pos_enc, vocab_size);
 
     encoder_out_cache = new Tensor<float>(1024, 512);
     encoder_out_cache->resize(1, 1, 0, 512);
@@ -51,6 +51,13 @@ Model::~Model()
 {
     delete encoder;
     delete ctc;
+}
+
+void Model::reset()
+{
+    encoder_out_cache->resize(1, 1, 0, 512);
+    encoder->reset();
+    ctc->reset();
 }
 
 void Model::hyps_process(deque<PathProb> hyps, Tensor<float> *din,
@@ -123,14 +130,21 @@ void Model::calc_score(deque<PathProb> hyps, Tensor<float> *decoder_out,
     }
 }
 
-string Model::forward(Tensor<float> *din, Tensor<float> *dout)
+string Model::forward(Tensor<float> *din)
 {
-    Tensor<float> *tmp;
-    encoder->forward(din, tmp);
+    encoder->forward(din);
+    encoder_out_cache->concat(din, 2);
+    ctc->forward(din);
 
-    encoder_out_cache->concat(tmp, 2);
-    // tmp->dump();
-    ctc->forward(tmp);
+    return rescoring();
+}
+
+string Model::forward_chunk(Tensor<float> *din)
+{
+    encoder->forward(din);
+    encoder_out_cache->concat(din, 2);
+    ctc->forward(din);
+    delete din;
     vector<int> result = ctc->get_one_best_hyps();
 
     return vocab->vector2string(result);
@@ -151,19 +165,26 @@ string Model::rescoring()
     Tensor<float> *decoder_out;
     decoder->forward(hyps_pad, hyps_mask, encoder_out, encoder_mask,
                      decoder_out);
+    delete hyps_pad;
+    delete hyps_mask;
+    delete encoder_out;
+    delete encoder_mask;
 
     // decoder_out->dump();
     // hyps_pad->dump();
 
     Tensor<float> scorce(1, 10);
+    scorce.zeros();
     calc_score(hyps, decoder_out, &scorce);
+    delete decoder_out;
 
     int i = 0;
     float max = -INFINITY;
     vector<int> result;
     for (auto hyps_it = hyps.begin(); hyps_it != hyps.end(); hyps_it++) {
         float tmp_scorce = 0.5 * hyps_it->prob + scorce.buff[i];
-        printf("score is %f\n", tmp_scorce);
+        // printf("score is %f %f %f\n", tmp_scorce, hyps_it->prob,
+        //        scorce.buff[i]);
         if (tmp_scorce > max) {
             max = tmp_scorce;
             result = hyps_it->prefix;
