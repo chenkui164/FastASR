@@ -14,6 +14,7 @@ class ConvModule {
   private:
     LayerNorm *norm;
     EncConvParams *params;
+    Tensor<float> *conv_cache;
 
   public:
     ConvModule(EncConvParams *params);

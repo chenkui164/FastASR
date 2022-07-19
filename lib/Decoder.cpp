@@ -2,6 +2,7 @@
 #include "util.h"
 #include <cblas.h>
 #include <stdio.h>
+#define vocab_size 5538
 
 Decoder::Decoder(DecoderParams *params, PositionEncoding *pos_enc)
     : params(params), pos_enc(pos_enc)
@@ -46,22 +47,22 @@ void Decoder::forward(Tensor<int> *&hyps_pad, Tensor<int> *&hyps_mask,
                                 encoder_mask);
     }
 
-
     norm_after->forward(embed_out);
-    dout = new Tensor<float>(embed_out->size[1], embed_out->size[2], 5537);
+    dout =
+        new Tensor<float>(embed_out->size[1], embed_out->size[2], vocab_size);
 
-    mm = dout->buff_size / 5537;
+    mm = dout->buff_size / vocab_size;
     for (i = 0; i < mm; i++) {
-        int offset = i * 5537;
-        memcpy(dout->buff + offset, params->output_bias, 5537 * sizeof(float));
+        int offset = i * vocab_size;
+        memcpy(dout->buff + offset, params->output_bias, vocab_size * sizeof(float));
     }
 
-    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, mm, 5537, 512, 1,
-                embed_out->buff, 512, params->output_weight, 5537, 1,
-                dout->buff, 5537);
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, mm, vocab_size, 512, 1,
+                embed_out->buff, 512, params->output_weight, vocab_size, 1,
+                dout->buff, vocab_size);
 
     for (i = 0; i < mm; i++) {
-        int offset = i * 5537;
-        log_softmax(dout->buff + offset, 5537);
+        int offset = i * vocab_size;
+        log_softmax(dout->buff + offset, vocab_size);
     }
 }

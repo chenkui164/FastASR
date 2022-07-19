@@ -12,6 +12,7 @@
 
 class Encoder {
   private:
+    int cache_size;
     EncoderParams *params;
     EmbedLayer *embed;
     PositionEncoding *pos_enc;

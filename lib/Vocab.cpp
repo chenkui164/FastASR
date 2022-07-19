@@ -37,3 +37,8 @@ string Vocab::vector2string(vector<int> in)
 
     return ss.str();
 }
+
+int Vocab::size()
+{
+    return vocab.size();
+}

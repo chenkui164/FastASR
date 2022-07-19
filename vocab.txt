@@ -1,6 +1,6 @@
 <blank>
 <unk>
-▁
+<space>
 A
 B
 C
@@ -27,6 +27,7 @@ W
 X
 Y
 Z
+○
 一
 丁
 七

@@ -4,15 +4,6 @@
 #include <math.h>
 #include <string.h>
 
-ConvModule::ConvModule(EncConvParams *params) : params(params)
-{
-    norm = new LayerNorm(&params->norm, 1e-5f);
-}
-
-ConvModule::~ConvModule()
-{
-}
-
 void glu(Tensor<float> *din, Tensor<float> *dout)
 {
     int mm = din->buff_size / 1024;
@@ -26,6 +17,26 @@ void glu(Tensor<float> *din, Tensor<float> *dout)
             dout->buff[out_off] = a / (1 + exp(-b));
         }
     }
+}
+
+ConvModule::ConvModule(EncConvParams *params) : params(params)
+{
+    norm = new LayerNorm(&params->norm, 1e-5f);
+    conv_cache = new Tensor<float>(14, 512);
+
+    Tensor<float> tmp(14, 1024);
+    int i, mm;
+    for (i = 0; i < 14; i++) {
+        int offset = i * 1024;
+        memcpy(tmp.buff + offset, params->pointwise_conv1_bias,
+               sizeof(float) * 1024);
+    }
+
+    glu(&tmp, conv_cache);
+}
+
+ConvModule::~ConvModule()
+{
 }
 
 void ConvModule::forward(Tensor<float> *din)
@@ -43,17 +54,25 @@ void ConvModule::forward(Tensor<float> *din)
                 din->buff, 512, params->pointwise_conv1_weight, 512, 1,
                 tmp.buff, 1024);
     glu(&tmp, din);
+    
 
     Tensor<float> conv_in(1, mm + 14);
     Tensor<float> blasin(mm, 15);
-    conv_in.zeros();
+    Tensor<float> tmp_din(din);
+    // conv_in.zeros();
 
     for (i = 0; i < 512; i++) {
-        for (j = 0; j < mm; j++) {
+        for (j = 0; j < 14; j++) {
             int ii = j * 512 + i;
-            conv_in.buff[j + 7] = din->buff[ii];
+            conv_in.buff[j] = conv_cache->buff[ii];
+        }
+
+        for (j = 14; j < 14 + mm; j++) {
+            int ii = (j - 14) * 512 + i;
+            conv_in.buff[j] = din->buff[ii];
             din->buff[ii] = params->depthwise_conv_bias[i];
         }
+
         for (j = 0; j < mm; j++) {
             int offset = j * 15;
             memcpy(blasin.buff + offset, conv_in.buff + j, 15 * sizeof(float));
@@ -63,6 +82,8 @@ void ConvModule::forward(Tensor<float> *din)
                     blasin.buff, 15, params->depthwise_conv_weight + i * 15, 1,
                     1, din->buff + i, 512);
     }
+    int t_offset = (mm - 14) * 512;
+    memcpy(conv_cache->buff, tmp_din.buff + t_offset, 14 * 512 * sizeof(float));
 
     norm->forward(din);
     swish(din);

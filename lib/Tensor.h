@@ -14,6 +14,7 @@ template <typename T> class Tensor {
   private:
     void alloc_buff();
     void free_buff();
+    int mem_size;
 
   public:
     T *buff;
@@ -28,6 +29,9 @@ template <typename T> class Tensor {
     void zeros();
     void shape();
     void disp();
+    void dump();
+    void concat(Tensor<T> *din, int dim);
+    void resize(int a, int b, int c, int d);
     void add(float coe, Tensor<T> *in);
     void reload(Tensor<T> *in);
 };
@@ -69,6 +73,7 @@ template <typename T> Tensor<T>::~Tensor()
 template <typename T> void Tensor<T>::alloc_buff()
 {
     buff_size = size[0] * size[1] * size[2] * size[3];
+    mem_size = buff_size;
     buff = (T *)memalign(32, buff_size * sizeof(T));
 }
 
@@ -85,6 +90,24 @@ template <typename T> void Tensor<T>::zeros()
 template <typename T> void Tensor<T>::shape()
 {
     printf("(%d,%d,%d,%d)\n", size[0], size[1], size[2], size[3]);
+}
+
+// TODO:: fix it!!!!
+template <typename T> void Tensor<T>::concat(Tensor<T> *din, int dim)
+{
+    memcpy(buff + buff_size, din->buff, din->buff_size * sizeof(T));
+    buff_size += din->buff_size;
+    size[dim] += din->size[dim];
+}
+
+// TODO:: fix it!!!!
+template <typename T> void Tensor<T>::resize(int a, int b, int c, int d)
+{
+    size[0] = a;
+    size[1] = b;
+    size[2] = c;
+    size[3] = d;
+    buff_size = size[0] * size[1] * size[2] * size[3];
 }
 
 template <typename T> void Tensor<T>::add(float coe, Tensor<T> *in)
@@ -107,5 +130,13 @@ template <typename T> void Tensor<T>::disp()
         cout << buff[i] << " ";
     }
     cout << endl;
+}
+
+template <typename T> void Tensor<T>::dump()
+{
+    FILE *fp;
+    fp = fopen("tmp.bin", "ab+");
+    fwrite(buff, 1, buff_size * sizeof(T), fp);
+    fclose(fp);
 }
 #endif

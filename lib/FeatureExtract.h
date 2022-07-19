@@ -1,0 +1,35 @@
+
+#ifndef FEATUREEXTRACT_H
+#define FEATUREEXTRACT_H
+
+#include <fftw3.h>
+#include <stdint.h>
+
+#include "FeatureQueue.h"
+#include "SpeechWrap.h"
+#include "Tensor.h"
+
+
+class FeatureExtract {
+  private:
+    SpeechWrap speech;
+    FeatureQueue fqueue;
+
+    float *fft_input;
+    fftwf_complex *fft_out;
+    fftwf_plan p;
+
+    void fftw_init();
+    void melspect(float *din, float *dout);
+    void global_cmvn(float *din);
+
+  public:
+    FeatureExtract();
+    ~FeatureExtract();
+    int size();
+    int status();
+    void insert(short *din, int len, SpeechFlag flag);
+    bool fetch(Tensor<float> *&dout);
+};
+
+#endif

@@ -14,6 +14,7 @@ class Vocab {
   public:
     Vocab(const char *filename);
     ~Vocab();
+    int size();
     string vector2string(vector<int> in);
 };
 

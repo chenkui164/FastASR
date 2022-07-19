@@ -1,83 +1,101 @@
-#include "Audio.h"
-#include "predefine_coe.h"
+
 #include <fftw3.h>
 #include <iostream>
 #include <malloc.h>
 #include <math.h>
 #include <string.h>
+
+#include "FeatureExtract.h"
+#include "predefine_coe.h"
+
 using namespace std;
 
-Audio::Audio(const char *filename)
+FeatureExtract::FeatureExtract()
 {
-    loadwav(filename);
-    audio2feature();
+    fftw_init();
 }
 
-Audio::~Audio()
+FeatureExtract::~FeatureExtract()
 {
-    free(speech);
+}
+int FeatureExtract::size()
+{
+    return fqueue.size();
 }
 
-void Audio::loadwav(const char *filename)
+void FeatureExtract::fftw_init()
 {
-
-    FILE *fp;
-    fp = fopen(filename, "rb");
-    fseek(fp, 0, SEEK_END);
-    uint32_t nFileLen = ftell(fp);
-    fseek(fp, 44, SEEK_SET);
-
-    speech_len = (nFileLen - 44) / 2;
-    printf("Audio time is %f s.\n", (float)speech_len / 16000);
-    speech = (int16_t *)malloc(sizeof(int16_t) * speech_len);
-    int ret = fread(speech, sizeof(int16_t), speech_len, fp);
-
-    fclose(fp);
+    int fft_size = 512;
+    fft_input = (float *)fftwf_malloc(sizeof(float) * fft_size);
+    fft_out = (fftwf_complex *)fftwf_malloc(sizeof(fftwf_complex) * fft_size);
+    memset(fft_input, 0, sizeof(float) * fft_size);
+    p = fftwf_plan_dft_r2c_1d(fft_size, fft_input, fft_out, FFTW_ESTIMATE);
 }
 
-void Audio::audio2feature()
+void FeatureExtract::insert(short *din, int len, SpeechFlag flag)
 {
     const float *window = (const float *)&window_hex;
     int window_size = 400;
     int fft_size = 512;
     int window_shift = 160;
-    int fbank_time = (int)((speech_len - window_size) / window_shift + 1);
 
-    fbank_feature = new Tensor<float>(fbank_time, 80);
+    speech.load(din, len);
+    int i, j;
+    float tmp_feature[80];
+    int ll = (speech.size() - 400) / 160;
 
-    float *fft_input = (float *)fftwf_malloc(sizeof(float) * fft_size);
-    fftwf_complex *fft_out =
-        (fftwf_complex *)fftwf_malloc(sizeof(fftwf_complex) * fft_size);
-    memset(fft_input, 0, sizeof(float) * fft_size);
-    fftwf_plan p;
-    p = fftwf_plan_dft_r2c_1d(fft_size, fft_input, fft_out, FFTW_ESTIMATE);
-
-    int i, j, idx;
-    float fbank[80];
-    for (i = 0, idx = 0; i < fbank_time; i++, idx += window_shift) {
+    for (i = 0; i <= speech.size() - 400; i = i + window_shift) {
         float tmp_mean = 0;
         for (j = 0; j < window_size; j++) {
-            tmp_mean += speech[idx + j];
+            tmp_mean += speech[i + j];
         }
 
         tmp_mean = tmp_mean / window_size;
 
-        float pre_val = (float)speech[idx] - tmp_mean;
+        float pre_val = (float)speech[i] - tmp_mean;
 
         for (j = 0; j < window_size; j++) {
             float win = window[j];
-            float cur_val = (float)speech[idx + j] - tmp_mean;
+            float cur_val = (float)speech[i + j] - tmp_mean;
             fft_input[j] = win * (cur_val - 0.97 * pre_val);
             pre_val = cur_val;
         }
+
         fftwf_execute(p);
-        melspect((float *)fft_out, fbank_feature->buff + i * 80);
+
+        melspect((float *)fft_out, tmp_feature);
+        SpeechFlag tmp_flag = S_MIDDLE;
+        if (flag == S_END && i > speech.size() - 560)
+            tmp_flag = S_END;
+
+        fqueue.push(tmp_feature, tmp_flag);
     }
-    fftwf_free(fft_out);
-    fftwf_free(fft_input);
+    speech.update(i);
 }
 
-void Audio::melspect(float *din, float *dout)
+bool FeatureExtract::fetch(Tensor<float> *&dout)
+{
+    if (fqueue.size() < 1) {
+        return false;
+    } else {
+        dout = fqueue.pop();
+        return true;
+    }
+}
+
+void FeatureExtract::global_cmvn(float *din)
+{
+    const float *std = (const float *)global_cmvn_std_online_hex;
+    const float *mean = (const float *)global_cmvn_mean_online_hex;
+    int i;
+    for (i = 0; i < 80; i++) {
+        float tmp = din[i] < 1e-7 ? 1e-7 : din[i];
+        tmp = log(tmp);
+        din[i] = (tmp - mean[i]) / std[i];
+    }
+}
+
+void FeatureExtract::melspect(float *din, float *dout)
 {
     float fftmag[256];
     float tmp;
@@ -357,16 +375,4 @@ void Audio::melspect(float *din, float *dout)
                melcoe[497] * fftmag[252] + melcoe[498] * fftmag[253] +
                melcoe[499] * fftmag[254] + melcoe[500] * fftmag[255];
     global_cmvn(dout);
-}
-
-void Audio::global_cmvn(float *din)
-{
-    const float *std = (const float *)global_cmvn_std_hex;
-    const float *mean = (const float *)global_cmvn_mean_hex;
-    int i;
-    for (i = 0; i < 80; i++) {
-        float tmp = din[i] < 1e-7 ? 1e-7 : din[i];
-        tmp = log(tmp);
-        din[i] = (tmp - mean[i]) / std[i];
-    }
 }

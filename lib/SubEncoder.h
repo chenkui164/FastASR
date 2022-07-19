@@ -14,6 +14,7 @@
 
 class SubEncoder {
   private:
+    Tensor<float> *in_cache;
     SubEncoderParams *params;
     ConvModule *conv_module;
     EncSelfAttn *self_attn;
