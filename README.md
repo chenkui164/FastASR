@@ -99,12 +99,12 @@ wget -c https://paddlespeech.bj.bcebos.com/s2t/wenetspeech/asr1/asr1_chunk_confo
 将压缩包解压wenetspeech目录下
 ```
 mkdir wenetspeech
-tar -xzvf asr1_conformer_wenetspeech_ckpt_0.1.1.model.tar.gz -C wenetspeech
+tar -xzvf asr1_chunk_conformer_wenetspeech_ckpt_1.0.0a.model.tar.gz -C wenetspeech
 ```
 将用于Python的模型转换为C++的，这样更方便通过内存映射的方式直接读取参数，加快模型读取速度。
 
 ```shell
-./scripts/convert.py wenetspeech/exp/conformer/checkpoints/avg_10.pdparams
+../scripts/convert.py wenetspeech/exp/chunk_conformer/checkpoints/avg_10.pdparams
 ```
 查看转换后的参数文件wenet_params.bin的md5码，md5码为367a285d43442ecfd9c9e5f5e1145b84，表示转换正确。
 
