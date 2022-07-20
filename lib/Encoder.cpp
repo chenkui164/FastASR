@@ -1,6 +1,6 @@
 #include <cblas.h>
 #include <iostream>
-#include <malloc.h>
+#include <stdlib.h>
 #include <stdlib.h>
 #include <string.h>
 

@@ -69,3 +69,4 @@ void log_softmax(float *din, int len)
     }
     free(tmp);
 }
+

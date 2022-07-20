@@ -2,7 +2,7 @@
 #include "predefine_coe.h"
 #include <fftw3.h>
 #include <iostream>
-#include <malloc.h>
+#include <stdlib.h>
 #include <math.h>
 #include <string.h>
 using namespace std;

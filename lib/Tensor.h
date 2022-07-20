@@ -4,9 +4,10 @@
 #define TENSOR_H
 
 #include <iostream>
-#include <malloc.h>
+#include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#include "alignedmem.h"
 
 using namespace std;
 
@@ -74,12 +75,12 @@ template <typename T> void Tensor<T>::alloc_buff()
 {
     buff_size = size[0] * size[1] * size[2] * size[3];
     mem_size = buff_size;
-    buff = (T *)memalign(32, buff_size * sizeof(T));
+    buff = (T *)aligned_malloc(32, buff_size * sizeof(T));
 }
 
 template <typename T> void Tensor<T>::free_buff()
 {
-    free(buff);
+    aligned_free(buff);
 }
 
 template <typename T> void Tensor<T>::zeros()

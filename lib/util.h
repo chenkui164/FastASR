@@ -12,4 +12,5 @@ extern void softmax(float *din, int mask, int len);
 
 extern void log_softmax(float *din, int len);
 
+
 #endif

@@ -2,8 +2,8 @@
 #include <fftw3.h>
 #include <iostream>
 #include <locale.h>
-#include <malloc.h>
 #include <math.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "CTCDecode.h"
@@ -55,6 +55,7 @@ Model::~Model()
     delete encoder;
     delete ctc;
     delete fe;
+    aligned_free(params_addr);
 }
 
 void Model::reset()
@@ -258,7 +259,7 @@ void Model::loadparams(const char *filename)
     uint32_t nFileLen = ftell(fp);
     fseek(fp, 0, SEEK_SET);
 
-    params_addr = (float *)memalign(32, nFileLen);
+    params_addr = (float *)aligned_malloc(32, nFileLen);
     int n = fread(params_addr, 1, nFileLen, fp);
 
     fclose(fp);

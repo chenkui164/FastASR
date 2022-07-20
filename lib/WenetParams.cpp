@@ -1,5 +1,5 @@
 #include "WenetParams.h"
-#include <malloc.h>
+#include <stdlib.h>
 #include <stdint.h>
 #include <stdio.h>
 
@@ -13,7 +13,7 @@
 //     fseek(fp, 0, SEEK_SET);
 //     printf("nFileLen is %d\n", nFileLen);
 
-//     params = (WenetParams *)memalign(32, nFileLen);
+//     params = (WenetParams *)aligned_malloc(32, nFileLen);
 //     int n = fread(params, 1, nFileLen, fp);
 //     printf("n is %d\n", n);
 
