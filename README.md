@@ -61,7 +61,7 @@ make
 #### 非流模式预训练模型下载
 在FastASR目录下创建cli文件夹，用于存放预训练模型.
 ```shell
-cd ../FastASR/cli
+cd ../cli
 ```
 从PaddleSpeech官网下载预训练模型，如果之前已经在运行过PaddleSpeech，
 则可以不用下载，它已经在目录`~/.paddlespeech/models/conformer_wenetspeech-zh-16k`中。
@@ -88,7 +88,7 @@ md5sum -b wenet_params.bin
 #### 流模式预训练模型下载
 在FastASR目录下创建stream文件夹，用于存放预训练模型.
 ```shell
-cd ../FastASR/stream
+cd ../stream
 ```
 从PaddleSpeech官网下载预训练模型，如果之前已经在运行过PaddleSpeech，
 则可以不用下载，它已经在目录`~/.paddlespeech/models/conformer_online_wenetspeech-zh-16k`中。
