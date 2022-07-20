@@ -29,7 +29,7 @@ class FeatureExtract {
     int size();
     int status();
     void reset();
-    void insert(short *din, int len, SpeechFlag flag);
+    void insert(short *din, int len, int flag);
     bool fetch(Tensor<float> *&dout);
 };
 

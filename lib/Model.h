@@ -8,18 +8,17 @@
 #include "CTCDecode.h"
 #include "Decoder.h"
 #include "Encoder.h"
+#include "FeatureExtract.h"
 #include "Tensor.h"
 #include "Vocab.h"
 #include "WenetParams.h"
+#include "CommonStruct.h"
 
-struct ModelConfig {
-    const char *vocab_path;
-    const char *wenet_path;
-};
 
 class Model {
   private:
     WenetParams params;
+    FeatureExtract *fe;
     float *params_addr;
     int vocab_size;
     Encoder *encoder;
@@ -43,8 +42,8 @@ class Model {
     Model(ModelConfig config, int mode);
     ~Model();
     void reset();
-    string forward_chunk(Tensor<float> *din);
-    string forward(Tensor<float> *din);
+    string forward_chunk(short *din, int len, int flag);
+    string forward(short *din, int len, int flag);
     string rescoring();
 };
 

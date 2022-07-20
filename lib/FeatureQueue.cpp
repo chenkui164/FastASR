@@ -1,4 +1,5 @@
 #include "FeatureQueue.h"
+#include "CommonStruct.h"
 #include <string>
 
 FeatureQueue::FeatureQueue()
@@ -25,7 +26,7 @@ void FeatureQueue::reset()
     buff_idx = 0;
 }
 
-void FeatureQueue::push(float *din, SpeechFlag flag)
+void FeatureQueue::push(float *din, int flag)
 {
     int offset = buff_idx * 80;
     memcpy(buff->buff + offset, din, 80 * sizeof(float));

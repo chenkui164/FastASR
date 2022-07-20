@@ -7,7 +7,6 @@
 #include <stdint.h>
 using namespace std;
 
-enum SpeechFlag { S_BEGIN, S_MIDDLE, S_END, S_ALL, S_ERR };
 
 class FeatureQueue {
   private:
@@ -21,7 +20,7 @@ class FeatureQueue {
     ~FeatureQueue();
     void reinit(int size);
     void reset();
-    void push(float *din, SpeechFlag flag);
+    void push(float *din, int flag);
     Tensor<float> *pop();
     int size();
 };

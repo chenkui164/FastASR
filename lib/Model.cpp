@@ -29,6 +29,7 @@ void disp_params(float *din, int size)
 
 Model::Model(ModelConfig cfg, int mode)
 {
+    fe = new FeatureExtract(mode);
 
     loadparams(cfg.wenet_path);
     vocab = new Vocab(cfg.vocab_path);
@@ -51,6 +52,7 @@ Model::~Model()
 {
     delete encoder;
     delete ctc;
+    delete fe;
 }
 
 void Model::reset()
@@ -58,6 +60,7 @@ void Model::reset()
     encoder_out_cache->resize(1, 1, 0, 512);
     encoder->reset();
     ctc->reset();
+    fe->reset();
 }
 
 void Model::hyps_process(deque<PathProb> hyps, Tensor<float> *din,
@@ -130,21 +133,34 @@ void Model::calc_score(deque<PathProb> hyps, Tensor<float> *decoder_out,
     }
 }
 
-string Model::forward(Tensor<float> *din)
+string Model::forward(short *din, int len, int flag)
 {
-    encoder->forward(din);
-    encoder_out_cache->concat(din, 2);
-    ctc->forward(din);
+    Tensor<float> *in;
+    fe->insert(din, len, flag);
+    fe->fetch(in);
+    encoder->forward(in);
+    encoder_out_cache->concat(in, 2);
+    ctc->forward(in);
 
     return rescoring();
 }
 
-string Model::forward_chunk(Tensor<float> *din)
+string Model::forward_chunk(short *din, int len, int flag)
 {
-    encoder->forward(din);
-    encoder_out_cache->concat(din, 2);
-    ctc->forward(din);
-    delete din;
+
+    fe->insert(din, len, flag);
+    if (fe->size() < 1) {
+        vector<int> result = ctc->get_one_best_hyps();
+        return vocab->vector2string(result);
+    }
+
+    Tensor<float> *in;
+    fe->fetch(in);
+
+    encoder->forward(in);
+    encoder_out_cache->concat(in, 2);
+    ctc->forward(in);
+    delete in;
     vector<int> result = ctc->get_one_best_hyps();
 
     return vocab->vector2string(result);
@@ -183,8 +199,8 @@ string Model::rescoring()
     vector<int> result;
     for (auto hyps_it = hyps.begin(); hyps_it != hyps.end(); hyps_it++) {
         float tmp_scorce = 0.5 * hyps_it->prob + scorce.buff[i];
-        // printf("score is %f %f %f\n", tmp_scorce, hyps_it->prob,
-        //        scorce.buff[i]);
+        printf("score is %f %f %f\n", tmp_scorce, hyps_it->prob,
+               scorce.buff[i]);
         if (tmp_scorce > max) {
             max = tmp_scorce;
             result = hyps_it->prefix;

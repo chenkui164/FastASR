@@ -7,6 +7,7 @@
 
 #include "FeatureExtract.h"
 #include "predefine_coe.h"
+#include "CommonStruct.h"
 
 using namespace std;
 
@@ -39,7 +40,7 @@ void FeatureExtract::fftw_init()
     p = fftwf_plan_dft_r2c_1d(fft_size, fft_input, fft_out, FFTW_ESTIMATE);
 }
 
-void FeatureExtract::insert(short *din, int len, SpeechFlag flag)
+void FeatureExtract::insert(short *din, int len, int flag)
 {
     const float *window = (const float *)&window_hex;
     int window_size = 400;
@@ -74,7 +75,7 @@ void FeatureExtract::insert(short *din, int len, SpeechFlag flag)
         fftwf_execute(p);
 
         melspect((float *)fft_out, tmp_feature);
-        SpeechFlag tmp_flag = S_MIDDLE;
+        int tmp_flag = S_MIDDLE;
         if (flag == S_END && i > speech.size() - 560)
             tmp_flag = S_END;
 

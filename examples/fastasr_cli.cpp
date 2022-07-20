@@ -11,7 +11,6 @@ int main(int argc, char *argv[])
 {
     struct timeval start, end;
     Audio audio;
-    FeatureExtract fe(0);
     ModelConfig cfg;
     cfg.vocab_path = "./cli/vocab.txt";
     cfg.wenet_path = "./cli/wenet_params.bin";
@@ -22,22 +21,13 @@ int main(int argc, char *argv[])
     int16_t *buff;
 
     mm.reset();
-    fe.reset();
 
     int len;
-    SpeechFlag flag = audio.fetch(buff, len);
-    fe.insert(buff, len, flag);
+    int flag = audio.fetch(buff, len);
     // cout << fe.size() << endl;
 
-    int j, ll;
-    ll = fe.size();
-    for (j = 0; j < ll; j++) {
-        Tensor<float> *buff;
-        fe.fetch(buff);
-        // buff->shape();
-        string msg = mm.forward(buff);
-        cout << msg << endl;
-    }
+    string msg = mm.forward(buff, len, flag);
+    cout << msg << endl;
 
     // int i;
     // for (i = 0; i < 10; i++) {

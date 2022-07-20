@@ -29,6 +29,8 @@ void CTCdecode::reset()
     curr_hyps_set.insert(tmp);
 
     abs_time_step = 0;
+    hyps.clear();
+    hyps.push_front(tmp);
 }
 
 float log_add(float *din, int len)
