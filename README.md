@@ -72,7 +72,7 @@ md5sum -b wenet_params.bin
 
 同时我也把转换好的wenet_params.bin上传至github，可以直接下载，可能会有些慢。
 ``` shell
-wget -c  https://github.com/chenkui164/FastASR/releases/download/V0.01/wenet_params.bin
+wget -c  https://github.com/chenkui164/FastASR/releases/download/v0.02/wenet_params.bin
 ```
 
 ### 如何使用
