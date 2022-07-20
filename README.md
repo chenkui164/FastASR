@@ -1,5 +1,6 @@
 # FastASR
 基于PaddleSpeech所使用的conformer模型，使用C++的高效实现模型推理，在树莓派4B等ARM平台运行也可流畅运行。
+（这两周要集中精力开发streaming ASR,数据结构会有大的调整，所以更新会比较慢了）
 
 ## 项目简介
 本项目仅实现了PaddleSpeech [r1.01版本](https://github.com/PaddlePaddle/PaddleSpeech/releases/tag/r1.0.1)中conformer_wenetspeech-zh-16k预训练模型。
@@ -72,7 +73,7 @@ md5sum -b wenet_params.bin
 
 同时我也把转换好的wenet_params.bin上传至github，可以直接下载，可能会有些慢。
 ``` shell
-wget -c  https://github.com/chenkui164/FastASR/releases/download/V0.01/wenet_params.bin
+wget -c  https://github.com/chenkui164/FastASR/releases/download/v0.02/wenet_params.bin
 ```
 
 ### 如何使用
