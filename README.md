@@ -1,6 +1,5 @@
 # FastASR
 基于PaddleSpeech所使用的conformer模型，使用C++的高效实现模型推理，在树莓派4B等ARM平台运行也可流畅运行。
-（这两周要集中精力开发streaming ASR,数据结构会有大的调整，所以更新会比较慢了）
 
 ## 项目简介
 本项目实现了PaddleSpeech [r1.01版本](https://github.com/PaddlePaddle/PaddleSpeech/releases/tag/r1.0.1)中conformer_wenetspeech-zh-16k和conformer_online_wenetspeech-zh-16k这两个模型。
@@ -23,6 +22,15 @@ PaddleSpeech是基于python实现的，本身的性能已经很不错了，即�
 * **独立**: 实现不依赖于现有的深度学习框架如pytorch、paddle、tensorflow等。
 * **依赖少**: 项目仅使用了两个第三方库libfftw3和libopenblas，并无其他依赖，所以在各个平台的可移植行很好，通用性很强。
 * **效率高**：算法中大量使用指针，减少原有算法中reshape和permute的操作，减少不必要的数据拷贝，从而提升算法性能。
+
+
+本项目最终生成的是动态库libfastasr.so和静态库libfastasr.a文件，方便用户的调用。
+在examples目录下是C++和C调用库的例子，以供用户参考。
+
+### 未完成工作
+* 支持python接口调用
+* 根据流式模型增加一些例子
+* 将来会支持Windows平台和MacOS平台
 
 ## 快速上手
 ### 安装依赖
@@ -53,9 +61,7 @@ make
 #### 非流模式预训练模型下载
 在FastASR目录下创建cli文件夹，用于存放预训练模型.
 ```shell
-cd ..
-mkdir cli
-cd cli
+cd ../FastASR/cli
 ```
 从PaddleSpeech官网下载预训练模型，如果之前已经在运行过PaddleSpeech，
 则可以不用下载，它已经在目录`~/.paddlespeech/models/conformer_wenetspeech-zh-16k`中。
@@ -71,7 +77,7 @@ tar -xzvf asr1_conformer_wenetspeech_ckpt_0.1.1.model.tar.gz -C wenetspeech
 将用于Python的模型转换为C++的，这样更方便通过内存映射的方式直接读取参数，加快模型读取速度。
 
 ```shell
-./convert.py wenetspeech/exp/conformer/checkpoints/wenetspeech.pdparams
+../script/convert.py wenetspeech/exp/conformer/checkpoints/wenetspeech.pdparams
 ```
 查看转换后的参数文件wenet_params.bin的md5码，md5码为9cfcf11ee70cb9423528b1f66a87eafd，表示转换正确。
 
@@ -82,9 +88,7 @@ md5sum -b wenet_params.bin
 #### 流模式预训练模型下载
 在FastASR目录下创建stream文件夹，用于存放预训练模型.
 ```shell
-cd ..
-mkdir stream
-cd stream
+cd ../FastASR/stream
 ```
 从PaddleSpeech官网下载预训练模型，如果之前已经在运行过PaddleSpeech，
 则可以不用下载，它已经在目录`~/.paddlespeech/models/conformer_online_wenetspeech-zh-16k`中。
@@ -100,7 +104,7 @@ tar -xzvf asr1_conformer_wenetspeech_ckpt_0.1.1.model.tar.gz -C wenetspeech
 将用于Python的模型转换为C++的，这样更方便通过内存映射的方式直接读取参数，加快模型读取速度。
 
 ```shell
-./convert.py wenetspeech/exp/conformer/checkpoints/avg_10.pdparams
+./script/convert.py wenetspeech/exp/conformer/checkpoints/avg_10.pdparams
 ```
 查看转换后的参数文件wenet_params.bin的md5码，md5码为367a285d43442ecfd9c9e5f5e1145b84，表示转换正确。
 
@@ -115,6 +119,9 @@ md5sum -b wenet_params.bin
 wget -c https://paddlespeech.bj.bcebos.com/PaddleAudio/zh.wav 
 ```
 非流式模型测试
+
+第一个参数为预训练模型存放的目录;
+第二个参数为需要识别的语音文件。
 
 ```shell
 ./build/examples/fastasr_cli cli/ zh.wav
@@ -133,6 +140,9 @@ Model inference takes 1.101319s.
 ```
 
 流式模式测试
+
+第一个参数为预训练模型存放的目录;
+第二个参数为需要识别的语音文件。
 
 ```shell
 ./build/examples/fastasr_stream stream/ zh.wav
@@ -278,7 +288,7 @@ sudo make PREFIX=/usr install
 
 运行程序
 ```shell
-./fastasr zh.wav
+./build/examples/fastasr_cli cli/ zh.wav
 ```
 结果
 ```shell
