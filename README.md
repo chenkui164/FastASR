@@ -3,9 +3,11 @@
 （这两周要集中精力开发streaming ASR,数据结构会有大的调整，所以更新会比较慢了）
 
 ## 项目简介
-本项目仅实现了PaddleSpeech [r1.01版本](https://github.com/PaddlePaddle/PaddleSpeech/releases/tag/r1.0.1)中conformer_wenetspeech-zh-16k预训练模型。
-这个预训练模型采用了当下最先进的conformer模型，使用10000+小时的wenetspeech数据集训练得到。
+本项目实现了PaddleSpeech [r1.01版本](https://github.com/PaddlePaddle/PaddleSpeech/releases/tag/r1.0.1)中conformer_wenetspeech-zh-16k和conformer_online_wenetspeech-zh-16k这两个模型。
+它们采用了当下最先进的conformer模型，使用10000+小时的wenetspeech数据集训练得到。
 经过测试它识别效果很好,可以媲美许多商用的ASR软件。
+* **conformer_wenetspeech-zh-16k**: 是非流式模型，每次识别是以句子为单位，所以实时性会差一些，但准确率会高一些。
+* **conformer_online_wenetspeech-zh-16k**: 是流式模型，模型的输入是语音流，并实时返回语音识别的结果。
 
 PaddleSpeech是基于python实现的，本身的性能已经很不错了，即使在没有GPU的个人电脑上运行，
 也能满足实时性的要求（如:时长为10s的语音，推理时间小于10s，即可满足实时性）。
@@ -48,6 +50,13 @@ make
 ```
 
 ### 下载预训练模型
+#### 非流模式预训练模型下载
+在FastASR目录下创建cli文件夹，用于存放预训练模型.
+```shell
+cd ..
+mkdir cli
+cd cli
+```
 从PaddleSpeech官网下载预训练模型，如果之前已经在运行过PaddleSpeech，
 则可以不用下载，它已经在目录`~/.paddlespeech/models/conformer_wenetspeech-zh-16k`中。
 ```shell
@@ -70,29 +79,133 @@ tar -xzvf asr1_conformer_wenetspeech_ckpt_0.1.1.model.tar.gz -C wenetspeech
 md5sum -b wenet_params.bin
 ```
 
-
-同时我也把转换好的wenet_params.bin上传至github，可以直接下载，可能会有些慢。
-``` shell
-wget -c  https://github.com/chenkui164/FastASR/releases/download/v0.02/wenet_params.bin
+#### 流模式预训练模型下载
+在FastASR目录下创建stream文件夹，用于存放预训练模型.
+```shell
+cd ..
+mkdir stream
+cd stream
+```
+从PaddleSpeech官网下载预训练模型，如果之前已经在运行过PaddleSpeech，
+则可以不用下载，它已经在目录`~/.paddlespeech/models/conformer_online_wenetspeech-zh-16k`中。
+```shell
+wget -c https://paddlespeech.bj.bcebos.com/s2t/wenetspeech/asr1/asr1_chunk_conformer_wenetspeech_ckpt_1.0.0a.model.tar.gz
 ```
 
-### 如何使用
-下载用于测试的wav文件
+将压缩包解压wenetspeech目录下
+```
+mkdir wenetspeech
+tar -xzvf asr1_conformer_wenetspeech_ckpt_0.1.1.model.tar.gz -C wenetspeech
+```
+将用于Python的模型转换为C++的，这样更方便通过内存映射的方式直接读取参数，加快模型读取速度。
+
+```shell
+./convert.py wenetspeech/exp/conformer/checkpoints/avg_10.pdparams
+```
+查看转换后的参数文件wenet_params.bin的md5码，md5码为367a285d43442ecfd9c9e5f5e1145b84，表示转换正确。
+
+```
+md5sum -b wenet_params.bin
+```
+
+
+#### 测试例子
+进入项目的根目录FastASR下载用于测试的wav文件
 ```shell
 wget -c https://paddlespeech.bj.bcebos.com/PaddleAudio/zh.wav 
 ```
+非流式模型测试
 
-执行程序
 ```shell
-./fastasr zh.wav
+./build/examples/fastasr_cli cli/ zh.wav
+```
+也可以使用c接口的例子
+```shell
+./build/examples/fastasr_cli_c cli/ zh.wav
 ```
 
 程序输出
 ```
 Audio time is 4.996812 s.
-Model initialization takes 0.163184s
+Model initialization takes 0.217759s
 result: "我认为跑步最重要的就是给我带来了身体健康"
-Model inference takes 0.462369s.
+Model inference takes 1.101319s.
+```
+
+流式模式测试
+
+```shell
+./build/examples/fastasr_stream stream/ zh.wav
+```
+也可以使用c接口的例子
+```shell
+./build/examples/fastasr_stream_c stream/ zh.wav
+```
+
+程序输出
+```
+Model initialization takes 0.222937s
+current result: ""
+current result: ""
+current result: ""
+current result: ""
+current result: ""
+current result: ""
+current result: ""
+current result: ""
+current result: ""
+current result: ""
+current result: ""
+current result: ""
+current result: ""
+current result: ""
+current result: ""
+current result: "我认为跑"
+current result: "我认为跑"
+current result: "我认为跑"
+current result: "我认为跑"
+current result: "我认为跑"
+current result: "我认为跑"
+current result: "我认为跑"
+current result: "我认为跑"
+current result: "我认为跑步最重要的"
+current result: "我认为跑步最重要的"
+current result: "我认为跑步最重要的"
+current result: "我认为跑步最重要的"
+current result: "我认为跑步最重要的"
+current result: "我认为跑步最重要的"
+current result: "我认为跑步最重要的"
+current result: "我认为跑步最重要的就是"
+current result: "我认为跑步最重要的就是"
+current result: "我认为跑步最重要的就是"
+current result: "我认为跑步最重要的就是"
+current result: "我认为跑步最重要的就是"
+current result: "我认为跑步最重要的就是"
+current result: "我认为跑步最重要的就是"
+current result: "我认为跑步最重要的就是"
+current result: "我认为跑步最重要的就是给我"
+current result: "我认为跑步最重要的就是给我"
+current result: "我认为跑步最重要的就是给我"
+current result: "我认为跑步最重要的就是给我"
+current result: "我认为跑步最重要的就是给我"
+current result: "我认为跑步最重要的就是给我"
+current result: "我认为跑步最重要的就是给我"
+current result: "我认为跑步最重要的就是给我带来了"
+current result: "我认为跑步最重要的就是给我带来了"
+current result: "我认为跑步最重要的就是给我带来了"
+current result: "我认为跑步最重要的就是给我带来了"
+current result: "我认为跑步最重要的就是给我带来了"
+current result: "我认为跑步最重要的就是给我带来了"
+current result: "我认为跑步最重要的就是给我带来了"
+current result: "我认为跑步最重要的就是给我带来了"
+current result: "我认为跑步最重要的就是给我带来了身体健康"
+current result: "我认为跑步最重要的就是给我带来了身体健康"
+current result: "我认为跑步最重要的就是给我带来了身体健康"
+current result: "我认为跑步最重要的就是给我带来了身体健康"
+current result: "我认为跑步最重要的就是给我带来了身体健康"
+current result: "我认为跑步最重要的就是给我带来了身体健康"
+final result: "我认为跑步最重要的就是给我带来了身体健康"
+Model inference takes 1.657996s.
 ```
 
 ## 树莓派4B上优化部署

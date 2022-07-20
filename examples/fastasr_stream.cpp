@@ -13,25 +13,33 @@ int main(int argc, char *argv[])
     int len = 1360;
     Audio audio(len);
 
-    Model mm("./stream/", 1);
+    gettimeofday(&start, NULL);
+    Model mm(argv[1], 1);
+    mm.reset();
+    gettimeofday(&end, NULL);
+    long seconds = (end.tv_sec - start.tv_sec);
+    long micros = ((seconds * 1000000) + end.tv_usec) - (start.tv_usec);
+    printf("Model initialization takes %lfs\n", (double)micros / 1000000);
 
-    int i;
-    for (i = 0; i < 10; i++) {
-        int16_t *buff;
-        // int len = 1360;
-        int sum = 0;
-        audio.loadwav("zh.wav");
-        mm.reset();
+    int16_t *buff;
+    int sum = 0;
+    audio.loadwav(argv[2]);
+    audio.disp();
 
-        int flag = S_MIDDLE;
-        while (flag == S_MIDDLE) {
-            flag = audio.fetch_chunck(buff, len);
-            sum += len;
-            string msg = mm.forward_chunk(buff, len, flag);
-            cout << msg << endl;
-        }
+    int flag = S_MIDDLE;
 
-        string msg = mm.rescoring();
-        cout << msg << endl;
+    gettimeofday(&start, NULL);
+    while (flag == S_MIDDLE) {
+        flag = audio.fetch_chunck(buff, len);
+        sum += len;
+        string msg = mm.forward_chunk(buff, len, flag);
+        cout << "current result: \"" << msg << "\"" << endl;
     }
+    string msg = mm.rescoring();
+    gettimeofday(&end, NULL);
+    cout << "final result: \"" << msg << "\"" << endl;
+
+    seconds = (end.tv_sec - start.tv_sec);
+    micros = ((seconds * 1000000) + end.tv_usec) - (start.tv_usec);
+    printf("Model inference takes %lfs.\n", (double)micros / 1000000);
 }
