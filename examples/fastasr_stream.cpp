@@ -12,11 +12,8 @@ int main(int argc, char *argv[])
     struct timeval start, end;
     int len = 1360;
     Audio audio(len);
-    ModelConfig cfg;
 
-    cfg.vocab_path = "stream/vocab.txt";
-    cfg.wenet_path = "stream/wenet_params.bin";
-    Model mm(cfg, 1);
+    Model mm("./stream/", 1);
 
     int i;
     for (i = 0; i < 10; i++) {

@@ -1,6 +1,6 @@
 
 FILE(GLOB SRCFILES *.cpp)
-message("${SRCFILES}")
+# message("${SRCFILES}")
 
 add_library(fastasr ${SRCFILES})
 

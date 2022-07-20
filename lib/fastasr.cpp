@@ -4,10 +4,10 @@
 
 using namespace std;
 
-void *model_create(struct ModelConfig config, int mode)
+void *model_create(const char *path, int mode)
 {
 
-    Model *model = new Model(config, mode);
+    Model *model = new Model(path, mode);
     return (void *)model;
 }
 

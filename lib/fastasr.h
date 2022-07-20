@@ -8,7 +8,7 @@
 extern "C" {
 #endif
 
-extern void *model_create(struct ModelConfig config, int mode);
+extern void *model_create(const char *path, int mode);
 extern void model_free(void *handle);
 extern void model_reset(void *handle);
 extern char *model_forward_chunk(void *handle, short *din, int len, int flag);

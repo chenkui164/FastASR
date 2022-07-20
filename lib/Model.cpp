@@ -27,12 +27,14 @@ void disp_params(float *din, int size)
     printf("\n");
 }
 
-Model::Model(ModelConfig cfg, int mode)
+Model::Model(const char *path, int mode)
 {
     fe = new FeatureExtract(mode);
-
-    loadparams(cfg.wenet_path);
-    vocab = new Vocab(cfg.vocab_path);
+    string cfg_path(path);
+    string wenet_path = cfg_path + "wenet_params.bin";
+    string vocab_path = cfg_path + "vocab.txt";
+    loadparams(wenet_path.c_str());
+    vocab = new Vocab(vocab_path.c_str());
     vocab_size = vocab->size();
     params_init();
 
@@ -199,8 +201,8 @@ string Model::rescoring()
     vector<int> result;
     for (auto hyps_it = hyps.begin(); hyps_it != hyps.end(); hyps_it++) {
         float tmp_scorce = 0.5 * hyps_it->prob + scorce.buff[i];
-        printf("score is %f %f %f\n", tmp_scorce, hyps_it->prob,
-               scorce.buff[i]);
+        // printf("score is %f %f %f\n", tmp_scorce, hyps_it->prob,
+        //        scorce.buff[i]);
         if (tmp_scorce > max) {
             max = tmp_scorce;
             result = hyps_it->prefix;

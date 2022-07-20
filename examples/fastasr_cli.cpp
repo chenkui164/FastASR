@@ -1,5 +1,5 @@
 #include <iostream>
-#include <sys/time.h> // for gettimeofday()
+#include <sys/time.h>
 
 #include "Audio.h"
 #include "FeatureExtract.h"
@@ -11,56 +11,30 @@ int main(int argc, char *argv[])
 {
     struct timeval start, end;
     Audio audio;
-    ModelConfig cfg;
-    cfg.vocab_path = "./cli/vocab.txt";
-    cfg.wenet_path = "./cli/wenet_params.bin";
+    audio.loadwav(argv[2]);
+    audio.disp();
 
-    Model mm(cfg, 0);
-
-    audio.loadwav("zh.wav");
-    int16_t *buff;
-
+    gettimeofday(&start, NULL);
+    Model mm(argv[1], 0);
     mm.reset();
+    gettimeofday(&end, NULL);
+    long seconds = (end.tv_sec - start.tv_sec);
+    long micros = ((seconds * 1000000) + end.tv_usec) - (start.tv_usec);
+    printf("Model initialization takes %lfs\n", (double)micros / 1000000);
 
+    int16_t *buff;
     int len;
     int flag = audio.fetch(buff, len);
-    // cout << fe.size() << endl;
 
+    gettimeofday(&start, NULL);
     string msg = mm.forward(buff, len, flag);
-    cout << msg << endl;
+    gettimeofday(&end, NULL);
 
-    // int i;
-    // for (i = 0; i < 10; i++) {
-    //     int16_t *buff;
-    //     int len = 1360;
-    //     int sum = 0;
+    cout << "result: \"" << msg << "\"" << endl;
 
-    //     SpeechFlag flag = S_MIDDLE;
-    //     while (flag == S_MIDDLE) {
-    //         flag = audio.fetch_chunck(buff, len);
-    //         sum += len;
-    //         fe.insert(buff, len, flag);
-    //     }
+    seconds = (end.tv_sec - start.tv_sec);
+    micros = ((seconds * 1000000) + end.tv_usec) - (start.tv_usec);
+    printf("Model inference takes %lfs.\n", (double)micros / 1000000);
 
-    //     int j = 0;
-    //     int ll = fe.size();
-
-    //     gettimeofday(&start, NULL);
-    //     for (j = 0; j < ll; j++) {
-    //         Tensor<float> *buff;
-    //         fe.fetch(buff);
-    //         // delete buff;
-    //         string msg = mm.forward_chunk(buff);
-    //         cout << msg << endl;
-    //     }
-
-    //     string msg = mm.rescoring();
-    //     cout << msg << endl;
-
-    //     gettimeofday(&end, NULL);
-    //     long seconds = (end.tv_sec - start.tv_sec);
-    //     long micros = ((seconds * 1000000) + end.tv_usec) - (start.tv_usec);
-    //     printf("Model initialization takes %lfs\n", (double)micros /
-    //     1000000);
-    // }
+    return 0;
 }

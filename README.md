@@ -40,8 +40,9 @@ git clone https://github.com/chenkui164/FastASR.git
 编译最新版的源码
 ```shell
 cd FastASR/
-```
-```shell
+mkdir build
+cd build
+cmake ..
 make
 ```
 

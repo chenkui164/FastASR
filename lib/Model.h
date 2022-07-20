@@ -6,14 +6,13 @@
 #include <string>
 
 #include "CTCDecode.h"
+#include "CommonStruct.h"
 #include "Decoder.h"
 #include "Encoder.h"
 #include "FeatureExtract.h"
 #include "Tensor.h"
 #include "Vocab.h"
 #include "WenetParams.h"
-#include "CommonStruct.h"
-
 
 class Model {
   private:
@@ -39,7 +38,7 @@ class Model {
                     Tensor<float> *scorce);
 
   public:
-    Model(ModelConfig config, int mode);
+    Model(const char *path, int mode);
     ~Model();
     void reset();
     string forward_chunk(short *din, int len, int flag);

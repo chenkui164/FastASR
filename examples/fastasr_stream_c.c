@@ -10,11 +10,8 @@ int main()
     audio_loadwav(audio_obj, "zh.wav");
     audio_disp(audio_obj);
 
-    struct ModelConfig cfg;
-    cfg.vocab_path = "./stream/vocab.txt";
-    cfg.wenet_path = "./stream/wenet_params.bin";
 
-    void *modle_obj = model_create(cfg, 1);
+    void *modle_obj = model_create("./stream/", 1);
     model_reset(modle_obj);
     int flag = S_MIDDLE;
     int16_t *buff;
