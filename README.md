@@ -33,7 +33,7 @@ PaddleSpeech是基于python实现的，本身的性能已经很不错了，即�
 * 将来会支持Windows平台和MacOS平台
 
 ## 快速上手
-### 安装依赖
+### Ubuntu 安装依赖
 
 安装依赖库libfftw3
 ```shell
@@ -42,6 +42,16 @@ sudo apt-get install libfftw3-dev libfftw3-single3
 安装依赖库libopenblas
 ```shell
 sudo apt-get install libopenblas-dev
+```
+### MacOS 安装依赖
+
+安装依赖库fftw
+```shell
+sudo brew install fftw
+```
+安装依赖库openblas
+```shell
+sudo brew install openblas
 ```
 ### 编译源码
 下载最新版的源码
