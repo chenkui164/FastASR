@@ -1,13 +1,13 @@
 
 #include <fftw3.h>
 #include <iostream>
-#include <stdlib.h>
 #include <math.h>
+#include <stdlib.h>
 #include <string.h>
 
+#include "CommonStruct.h"
 #include "FeatureExtract.h"
 #include "predefine_coe.h"
-#include "CommonStruct.h"
 
 using namespace std;
 
@@ -96,8 +96,17 @@ bool FeatureExtract::fetch(Tensor<float> *&dout)
 
 void FeatureExtract::global_cmvn(float *din)
 {
-    const float *std = (const float *)global_cmvn_std_online_hex;
-    const float *mean = (const float *)global_cmvn_mean_online_hex;
+    const float *std;
+    const float *mean;
+
+    if (mode == 0) {
+        std = (const float *)global_cmvn_std_hex;
+        mean = (const float *)global_cmvn_mean_hex;
+    } else {
+        std = (const float *)global_cmvn_std_online_hex;
+        mean = (const float *)global_cmvn_mean_online_hex;
+    }
+
     int i;
     for (i = 0; i < 80; i++) {
         float tmp = din[i] < 1e-7 ? 1e-7 : din[i];
