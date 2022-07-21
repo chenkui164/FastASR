@@ -31,8 +31,9 @@ Model::Model(const char *path, int mode)
 {
     fe = new FeatureExtract(mode);
     string cfg_path(path);
-    string wenet_path = cfg_path + "wenet_params.bin";
-    string vocab_path = cfg_path + "vocab.txt";
+
+    string wenet_path = pathAppend(cfg_path, "wenet_params.bin");
+    string vocab_path = pathAppend(cfg_path, "vocab.txt");
     loadparams(wenet_path.c_str());
     vocab = new Vocab(vocab_path.c_str());
     vocab_size = vocab->size();
