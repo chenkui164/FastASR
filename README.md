@@ -69,7 +69,7 @@ make
 
 ### 下载预训练模型
 #### 非流模式预训练模型下载
-在FastASR目录下创建cli文件夹，用于存放预训练模型.
+进入FastASR/cli文件夹，用于存放下载的预训练模型.
 ```shell
 cd ../cli
 ```
@@ -96,7 +96,7 @@ md5sum -b wenet_params.bin
 ```
 
 #### 流模式预训练模型下载
-在FastASR目录下创建stream文件夹，用于存放预训练模型.
+进入FastASR/stream文件夹，用于存放下载的预训练模型.
 ```shell
 cd ../stream
 ```
