@@ -28,6 +28,7 @@ PaddleSpeech是基于python实现的，本身的性能已经很不错了，即�
 在examples目录下是C++和C调用库的例子，以供用户参考。
 
 ### 未完成工作
+* 量化和压缩模型
 * 支持python接口调用
 * 根据流式模型增加一些例子
 * 将来会支持Windows平台和MacOS平台
