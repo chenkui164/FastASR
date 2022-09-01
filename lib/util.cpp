@@ -4,6 +4,37 @@
 #include <stdio.h>
 
 #include "Tensor.h"
+
+float *loadparams(const char *filename)
+{
+
+    FILE *fp;
+    fp = fopen(filename, "rb");
+    fseek(fp, 0, SEEK_END);
+    uint32_t nFileLen = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+
+    float *params_addr = (float *)aligned_malloc(32, nFileLen);
+    int n = fread(params_addr, 1, nFileLen, fp);
+    fclose(fp);
+
+    return params_addr;
+}
+
+int val_align(int val, int align)
+{
+    float tmp = ceil((float)val / (float)align) * (float)align;
+    return (int)tmp;
+}
+
+void disp_params(float *din, int size)
+{
+    int i;
+    for (i = 0; i < size; i++) {
+        printf("%f ", din[i]);
+    }
+    printf("\n");
+}
 void SaveDataFile(const char *filename, void *data, uint32_t len)
 {
     FILE *fp;
@@ -46,6 +77,7 @@ void swish(Tensor<float> *din)
         din->buff[i] = val / (1 + exp(-val));
     }
 }
+
 
 void softmax(float *din, int mask, int len)
 {

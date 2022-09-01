@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <ComDefine.h>
+
 #include "CommonStruct.h"
 #include "FeatureExtract.h"
 #include "predefine_coe.h"
@@ -40,7 +42,7 @@ void FeatureExtract::fftw_init()
     p = fftwf_plan_dft_r2c_1d(fft_size, fft_input, fft_out, FFTW_ESTIMATE);
 }
 
-void FeatureExtract::insert(short *din, int len, int flag)
+void FeatureExtract::insert(float *din, int len, int flag)
 {
     const float *window = (const float *)&window_hex;
     int window_size = 400;
@@ -50,7 +52,7 @@ void FeatureExtract::insert(short *din, int len, int flag)
     speech.load(din, len);
     int i, j;
     float tmp_feature[80];
-    if (mode == 0) {
+    if (mode == 0 || mode == 2) {
         int ll = (speech.size() - 400) / 160 + 1;
         fqueue.reinit(ll);
     }
@@ -99,19 +101,31 @@ void FeatureExtract::global_cmvn(float *din)
     const float *std;
     const float *mean;
 
-    if (mode == 0) {
-        std = (const float *)global_cmvn_std_hex;
-        mean = (const float *)global_cmvn_mean_hex;
-    } else {
-        std = (const float *)global_cmvn_std_online_hex;
-        mean = (const float *)global_cmvn_mean_online_hex;
-    }
+    if (mode < 2) {
+        if (mode == 0) {
+            std = (const float *)global_cmvn_std_hex;
+            mean = (const float *)global_cmvn_mean_hex;
+        } else {
+            std = (const float *)global_cmvn_std_online_hex;
+            mean = (const float *)global_cmvn_mean_online_hex;
+        }
 
-    int i;
-    for (i = 0; i < 80; i++) {
-        float tmp = din[i] < 1e-7 ? 1e-7 : din[i];
-        tmp = log(tmp);
-        din[i] = (tmp - mean[i]) / std[i];
+        int i;
+        for (i = 0; i < 80; i++) {
+            float tmp = din[i] < 1e-7 ? 1e-7 : din[i];
+            tmp = log(tmp);
+            din[i] = (tmp - mean[i]) / std[i];
+        }
+    } else {
+        int i;
+
+        int val = 0x34000000;
+        float min_resol = *((float *)&val);
+
+        for (i = 0; i < 80; i++) {
+            float tmp = din[i] < min_resol ? min_resol : din[i];
+            din[i] = log(tmp);
+        }
     }
 }
 

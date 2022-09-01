@@ -6,9 +6,9 @@
 
 class SpeechWrap {
   private:
-    int16_t cache[400];
+    float cache[400];
     int cache_size;
-    int16_t *in;
+    float *in;
     int in_size;
     int total_size;
     int next_cache_size;
@@ -16,11 +16,11 @@ class SpeechWrap {
   public:
     SpeechWrap();
     ~SpeechWrap();
-    void load(int16_t *din, int len);
+    void load(float *din, int len);
     void update(int offset);
     void reset();
     int size();
-    int16_t &operator[](int i);
+    float &operator[](int i);
 };
 
 #endif
