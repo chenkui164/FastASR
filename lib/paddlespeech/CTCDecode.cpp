@@ -253,7 +253,6 @@ void CTCdecode::forward(Tensor<float> *din)
         int offset = i * vocab_size;
         log_softmax(ctcin.buff + offset, vocab_size);
     }
-    // ctcin.dump();
 
     ctc_beam_search(&ctcin);
 }

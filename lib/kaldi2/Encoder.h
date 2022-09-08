@@ -1,6 +1,6 @@
 
-#ifndef PS_ENCODER_H
-#define PS_ENCODER_H
+#ifndef K2_ENCODER_H
+#define K2_ENCODER_H
 
 #include <stdint.h>
 
@@ -8,7 +8,7 @@
 #include "EmbedLayer.h"
 #include "ModelParams.h"
 #include "PositionEncoding.h"
-// #include "SubEncoder.h"
+#include "SubEncoder.h"
 
 using namespace kaldi2;
 
@@ -19,7 +19,7 @@ class Encoder {
     EncoderParams *params;
     EmbedLayer *embed;
     PositionEncoding *pos_enc;
-    // SubEncoder *subencoder[12];
+    SubEncoder *subencoder[12];
     // LayerNorm *after_norm;
 
   public:

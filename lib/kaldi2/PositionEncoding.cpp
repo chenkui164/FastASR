@@ -10,16 +10,16 @@ using namespace kaldi2;
 
 PositionEncoding::PositionEncoding(int max)
 {
-    pos_enc = new Tensor<float>(max, 512);
-    float *div = (float *)pos_enc_coe_hex;
+    pos_enc = new Tensor<float>(2 * max - 1, 512);
+    float *div_term = (float *)pos_enc_div_term_hex;
     int i, j;
-    for (i = 0; i < max; i++) {
-        int offset = i * 512;
-        float *buff = pos_enc->buff + offset;
+    int ii = 0;
+    for (i = max - 1; i >= -max + 1; i--, ii++) {
         for (j = 0; j < 256; j++) {
-            float tmp = i / div[j];
-            buff[2 * j] = sin(tmp);
-            buff[2 * j + 1] = cos(tmp);
+            float coe = i * div_term[j];
+            int idx = ii * 512 + 2 * j;
+            pos_enc->buff[idx] = sin(coe);
+            pos_enc->buff[idx + 1] = cos(coe);
         }
     }
 }
@@ -31,8 +31,10 @@ PositionEncoding::~PositionEncoding()
 
 void PositionEncoding::fetch(int size, Tensor<float> *&out)
 {
-    // out = new Tensor<float>(size, 512);
-    // memcpy(out->buff, pos_enc->buff, out->buff_size * sizeof(float));
-    out = pos_enc;
-    out->resize(1, 1, size, 512);
+    int all_size = size * 2 - 1;
+    out = new Tensor<float>(all_size, 512);
+    int start = pos_enc->size[2] / 2 - size + 1;
+
+    memcpy(out->buff, pos_enc->buff + start * 512,
+           all_size * 512 * sizeof(float));
 }

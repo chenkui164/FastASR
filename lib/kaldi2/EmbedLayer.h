@@ -1,6 +1,6 @@
 
-#ifndef PS_EMBEDLAYER_H
-#define PS_EMBEDLAYER_H
+#ifndef K2_EMBEDLAYER_H
+#define K2_EMBEDLAYER_H
 
 #include <stdint.h>
 

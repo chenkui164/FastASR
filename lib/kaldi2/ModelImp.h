@@ -9,7 +9,9 @@
 #include "../FeatureExtract.h"
 #include "../Tensor.h"
 #include "../Vocab.h"
+#include "Decoder.h"
 #include "Encoder.h"
+#include "Joiner.h"
 #include "ModelParams.h"
 #include "PositionEncoding.h"
 
@@ -24,6 +26,9 @@ class ModelImp : public Model {
 
     PositionEncoding *pos_enc;
     Encoder *encoder;
+    Joiner *joiner;
+    Decoder *decoder;
+    Vocab *vocab;
 
   public:
     ModelImp(const char *path, int mode);
@@ -32,6 +37,8 @@ class ModelImp : public Model {
     string forward_chunk(float *din, int len, int flag);
     string forward(float *din, int len, int flag);
     string rescoring();
+
+    string greedy_search(Tensor<float> *&encoder_out);
 };
 
 } // namespace kaldi2

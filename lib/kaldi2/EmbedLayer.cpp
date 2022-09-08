@@ -19,12 +19,11 @@ EmbedLayer::~EmbedLayer()
 
 void EmbedLayer::forward(Tensor<float> *&din)
 {
-    din->shape();
     conv0_forward(din);
     conv1_forward(din);
     conv2_forward(din);
     linear_out_forward(din);
-    norm_forward(din);
+    basic_norm(din, *params->out_norm);
 }
 
 void EmbedLayer::get_conv_ind(int in_row, int in_column, int kernel, int stride,
@@ -35,7 +34,7 @@ void EmbedLayer::get_conv_ind(int in_row, int in_column, int kernel, int stride,
     out_row = (in_row - kernel + stride + 2 * padding) / stride;
     out_column = (in_column - kernel + stride + 2 * padding) / stride;
     out_idxs = (int *)malloc(sizeof(int) * out_row * out_column * 9);
-    printf("out_row is %d,out_column is %d\n", out_row, out_column);
+    // printf("out_row is %d,out_column is %d\n", out_row, out_column);
 
     int m = in_row;
     int n = in_column;
@@ -159,7 +158,6 @@ void EmbedLayer::conv1_forward(Tensor<float> *&din)
         float val = blas_out.buff[i];
         din->buff[kk] = val / (1 + exp(-val + 1));
     }
-    // din->dump();
 }
 
 void EmbedLayer::conv2_forward(Tensor<float> *&din)
@@ -231,13 +229,11 @@ void EmbedLayer::linear_out_forward(Tensor<float> *&din)
                 512);
     delete din;
     din = dout;
-    // din->dump();
 }
 
 void EmbedLayer::norm_forward(Tensor<float> *&din)
 {
 
-    din->shape();
     int Tmax = din->size[2];
 
     int i, j;
@@ -253,5 +249,4 @@ void EmbedLayer::norm_forward(Tensor<float> *&din)
             din->buff[ii] = din->buff[ii] / mean;
         }
     }
-
 }

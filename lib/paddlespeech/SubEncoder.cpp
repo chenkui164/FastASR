@@ -62,7 +62,6 @@ void SubEncoder::forward(Tensor<float> *din, Tensor<float> *pe)
 // {
 //     int offset = in_cache->buff_size;
 //     in_cache->concat(din, 2);
-//     // in_cache->shape();
 
 //     Tensor<float> residual(in_cache);
 //     Tensor<float> tmp_in(in_cache);

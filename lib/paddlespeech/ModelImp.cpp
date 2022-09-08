@@ -183,9 +183,6 @@ string ModelImp::rescoring()
     delete encoder_out;
     delete encoder_mask;
 
-    // decoder_out->dump();
-    // hyps_pad->dump();
-
     Tensor<float> scorce(1, 10);
     scorce.zeros();
     calc_score(hyps, decoder_out, &scorce);
@@ -196,8 +193,6 @@ string ModelImp::rescoring()
     vector<int> result;
     for (auto hyps_it = hyps.begin(); hyps_it != hyps.end(); hyps_it++) {
         float tmp_scorce = 0.5 * hyps_it->prob + scorce.buff[i];
-        // printf("score is %f %f %f\n", tmp_scorce, hyps_it->prob,
-        //        scorce.buff[i]);
         if (tmp_scorce > max) {
             max = tmp_scorce;
             result = hyps_it->prefix;

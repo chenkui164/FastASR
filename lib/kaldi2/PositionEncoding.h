@@ -1,7 +1,7 @@
 
 
-#ifndef PS_POSITIONENCODING_H
-#define PS_POSITIONENCODING_H
+#ifndef K2_POSITIONENCODING_H
+#define K2_POSITIONENCODING_H
 
 #include "../Tensor.h"
 #include <stdint.h>

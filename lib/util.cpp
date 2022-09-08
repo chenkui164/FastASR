@@ -43,6 +43,39 @@ void SaveDataFile(const char *filename, void *data, uint32_t len)
     fclose(fp);
 }
 
+void basic_norm(Tensor<float> *&din, float norm)
+{
+
+    int Tmax = din->size[2];
+
+    int i, j;
+    for (i = 0; i < Tmax; i++) {
+        float sum = 0;
+        for (j = 0; j < 512; j++) {
+            int ii = i * 512 + j;
+            sum += din->buff[ii] * din->buff[ii];
+        }
+        float mean = sqrt(sum / 512 + norm);
+        for (j = 0; j < 512; j++) {
+            int ii = i * 512 + j;
+            din->buff[ii] = din->buff[ii] / mean;
+        }
+    }
+}
+
+void findmax(float *din, int len, float &max_val, int &max_idx)
+{
+    int i;
+    max_val = -INFINITY;
+    max_idx = -1;
+    for (i = 0; i < len; i++) {
+        if (din[i] > max_val) {
+            max_val = din[i];
+            max_idx = i;
+        }
+    }
+}
+
 string pathAppend(const string &p1, const string &p2)
 {
 
@@ -78,6 +111,14 @@ void swish(Tensor<float> *din)
     }
 }
 
+void doubleswish(Tensor<float> *din)
+{
+    int i;
+    for (i = 0; i < din->buff_size; i++) {
+        float val = din->buff[i];
+        din->buff[i] = val / (1 + exp(-val + 1));
+    }
+}
 
 void softmax(float *din, int mask, int len)
 {
