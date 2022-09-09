@@ -8,7 +8,22 @@ message("${files}")
 
 add_library(fastasr ${files})
 
-set(EXTRA_LIBS fftw3f openblas)
+if(WIN32)
+
+	if(CMAKE_CL_64)
+
+	link_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../win/lib/x64 )
+	else()
+	link_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../win/lib/x86 )
+	endif()
+
+	include_directories(../win/include ../win/include/openblas )
+	set(EXTRA_LIBS libfftw3f-3 libopenblas)
+else()
+	set(EXTRA_LIBS fftw3f openblas)
+endif()
+
+
 
 # target_include_directories(fastasr PUBLIC "paddlespeech")
 include_directories("../include")

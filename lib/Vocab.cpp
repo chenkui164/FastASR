@@ -19,10 +19,11 @@ Vocab::Vocab(const char *filename)
             vocab.push_back(line);
         }
         // cout << vocab[1719] << endl;
-    } else // 没有该文件
-    {
-        cout << "no such file" << endl;
     }
+    //else // 没有该文件
+    //{
+    //    cout << "no such file" << endl;
+    //}
 }
 Vocab::~Vocab()
 {
