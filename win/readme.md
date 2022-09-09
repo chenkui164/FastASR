@@ -7,7 +7,7 @@
 
 ## demo
 
-[示例](images/smaple/png)
+[示例](images/sample.png)
 
 ## 准备windows库依赖库
 
