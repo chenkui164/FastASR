@@ -13,23 +13,6 @@ EncSelfAttn::~EncSelfAttn()
 {
 }
 
-void linear_forward(Tensor<float> *din, Tensor<float> *dout, float *weight,
-                    float *bias)
-{
-    // int mm = din->buff_size / 512;
-    // int i;
-    // if (bias != 0) {
-    //     for (i = 0; i < mm; i++) {
-    //         int offset = i * 512;
-    //         memcpy(dout->buff + offset, bias, sizeof(float) * 512);
-    //     }
-    // } else {
-    //     dout->zeros();
-    // }
-
-    // cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, mm, 512, 512, 1,
-    //             din->buff, 512, weight, 512, 1, dout->buff, 512);
-}
 
 void EncSelfAttn::forward(Tensor<float> *din, Tensor<float> *pe)
 {

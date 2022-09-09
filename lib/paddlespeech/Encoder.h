@@ -6,11 +6,14 @@
 
 #include "../Tensor.h"
 #include "EmbedLayer.h"
+#include "ModelParams.h"
 #include "PositionEncoding.h"
 #include "SubEncoder.h"
-#include "ModelParams.h"
 
 using namespace paddlespeech;
+
+namespace paddlespeech {
+
 class Encoder {
   private:
     int cache_size;
@@ -26,5 +29,7 @@ class Encoder {
     void reset();
     void forward(Tensor<float> *&din);
 };
+
+} // namespace paddlespeech
 
 #endif

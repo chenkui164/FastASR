@@ -11,6 +11,7 @@
 #include "../util.h"
 
 using namespace std;
+using namespace paddlespeech;
 
 Encoder::Encoder(EncoderParams *params, PositionEncoding *pos_enc, int mode)
     : params(params), pos_enc(pos_enc)

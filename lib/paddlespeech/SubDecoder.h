@@ -12,6 +12,9 @@
 #include "ModelParams.h"
 
 using namespace paddlespeech;
+
+namespace paddlespeech {
+
 class SubDecoder {
   private:
     SubDecoderParams *params;
@@ -31,5 +34,7 @@ class SubDecoder {
     void forward(Tensor<float> *din, Tensor<int> *din_mask,
                  Tensor<float> *encoder_out, Tensor<int> *encoder_mask);
 };
+
+} // namespace paddlespeech
 
 #endif

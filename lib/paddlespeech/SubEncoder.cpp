@@ -4,6 +4,8 @@
 #include "FeedForward.h"
 #include "LayerNorm.h"
 
+using namespace paddlespeech;
+
 SubEncoder::SubEncoder(SubEncoderParams *params, int mode) : params(params)
 {
     in_cache = new Tensor<float>(1024, 512);

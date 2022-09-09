@@ -6,6 +6,8 @@
 #include "../Tensor.h"
 #include <stdint.h>
 
+namespace paddlespeech {
+
 class PositionEncoding {
   private:
     Tensor<float> *pos_enc;
@@ -15,5 +17,7 @@ class PositionEncoding {
     ~PositionEncoding();
     void fetch(int size, Tensor<float> *&out);
 };
+
+} // namespace paddlespeech
 
 #endif

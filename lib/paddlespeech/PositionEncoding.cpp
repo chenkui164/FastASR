@@ -6,6 +6,8 @@
 #include "../predefine_coe.h"
 #include "PositionEncoding.h"
 
+using namespace paddlespeech;
+
 PositionEncoding::PositionEncoding(int max)
 {
     pos_enc = new Tensor<float>(max, 512);

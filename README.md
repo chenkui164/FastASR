@@ -1,18 +1,24 @@
 # FastASR
-基于PaddleSpeech所使用的conformer模型，使用C++的高效实现模型推理，在树莓派4B等ARM平台运行也可流畅运行。
+
+这是一个用C++实现ASR推理的项目，它依赖很少，安装也很简单，推理速度很快，在树莓派4B等ARM平台也可以流畅的运行。
+推理模型是基于目前最先进的conformer模型，使用10000+小时的wenetspeech数据集训练得到， 所以识别效果也很好，可以媲美许多商用的ASR软件。
 
 ## 项目简介
-本项目实现了PaddleSpeech [r1.01版本](https://github.com/PaddlePaddle/PaddleSpeech/releases/tag/r1.0.1)中conformer_wenetspeech-zh-16k和conformer_online_wenetspeech-zh-16k这两个模型。
-它们采用了当下最先进的conformer模型，使用10000+小时的wenetspeech数据集训练得到。
-经过测试它识别效果很好,可以媲美许多商用的ASR软件。
-* **conformer_wenetspeech-zh-16k**: 是非流式模型，每次识别是以句子为单位，所以实时性会差一些，但准确率会高一些。
-* **conformer_online_wenetspeech-zh-16k**: 是流式模型，模型的输入是语音流，并实时返回语音识别的结果。
 
-PaddleSpeech是基于python实现的，本身的性能已经很不错了，即使在没有GPU的个人电脑上运行，
+目前本项目实现了3个模型，它们是PaddleSpeech [r1.01版本](https://github.com/PaddlePaddle/PaddleSpeech/releases/tag/r1.0.1)中conformer_wenetspeech-zh-16k和conformer_online_wenetspeech-zh-16k
+，以及[kaidi2](https://github.com/k2-fsa/icefall/tree/master/egs/wenetspeech/ASR)的rnnt2。
+
+* **非流式模型**：每次识别是以句子为单位，所以实时性会差一些，但准确率会高一些。
+* **流式模型**：每次识别是以句子为单位，所以实时性会差一些，但准确率会高一些。  
+
+k2_rnnt2和conformer_wenetspeech-zh-16k是属于非流式模型，
+conformer_online_wenetspeech-zh-16k属于流式模型。
+
+上面提到的这些模型都是基于深度学习框架（paddlepaddle或pytorch）实现的, 本身的性能已经很不错了，即使在没有GPU的个人电脑上运行，
 也能满足实时性的要求（如:时长为10s的语音，推理时间小于10s，即可满足实时性）。
 
 
-但是要把PaddleSpeech部署在ARM平台，会遇到两个方面的困难。
+但是要把深度学习模型部署在ARM平台，会遇到两个方面的困难。
 * 不容易安装，需要自己编译一些组件。
 * 执行效率很慢，无法满足实时性的要求。
 
@@ -69,10 +75,34 @@ make
 ```
 
 ### 下载预训练模型
-#### 非流模式预训练模型下载
-进入FastASR/cli文件夹，用于存放下载的预训练模型.
+
+#### k2_rnnt2预训练模型下载
+
+进入FastASR/k2_rnnt2_cli文件夹，用于存放下载的预训练模型.
 ```shell
-cd ../cli
+cd ../k2_rnnt2_cli
+```
+从huggingface官网下载预训练模型，预训练模型所在的[仓库地址](https://huggingface.co/luomingshuang/icefall_asr_wenetspeech_pruned_transducer_stateless2)
+也可通过命令一键下载。
+
+```shell
+wget -c https://huggingface.co/luomingshuang/icefall_asr_wenetspeech_pruned_transducer_stateless2/resolve/main/exp/pretrained_epoch_10_avg_2.pt
+```
+
+将用于Python的模型转换为C++的，这样更方便通过内存映射的方式直接读取参数，加快模型读取速度。
+
+```shell
+../scripts/k2_rnnt2_convert.py pretrained_epoch_10_avg_2.pt
+```
+查看转换后的参数文件wenet_params.bin的md5码，md5码为33a941f3c1a20a5adfb6f18006c11513，表示转换正确。
+
+```
+md5sum -b wenet_params.bin
+```
+#### conformer_wenetspeech-zh-16k预训练模型下载
+进入FastASR/paddlespeech_cli文件夹，用于存放下载的预训练模型.
+```shell
+cd ../paddlespeech_cli
 ```
 从PaddleSpeech官网下载预训练模型，如果之前已经在运行过PaddleSpeech，
 则可以不用下载，它已经在目录`~/.paddlespeech/models/conformer_wenetspeech-zh-16k`中。
@@ -88,7 +118,7 @@ tar -xzvf asr1_conformer_wenetspeech_ckpt_0.1.1.model.tar.gz -C wenetspeech
 将用于Python的模型转换为C++的，这样更方便通过内存映射的方式直接读取参数，加快模型读取速度。
 
 ```shell
-../scripts/convert.py wenetspeech/exp/conformer/checkpoints/wenetspeech.pdparams
+../scripts/paddlespeech_convert.py wenetspeech/exp/conformer/checkpoints/wenetspeech.pdparams
 ```
 查看转换后的参数文件wenet_params.bin的md5码，md5码为9cfcf11ee70cb9423528b1f66a87eafd，表示转换正确。
 
@@ -97,12 +127,13 @@ md5sum -b wenet_params.bin
 ```
 
 #### 流模式预训练模型下载
-进入FastASR/stream文件夹，用于存放下载的预训练模型.
+进入FastASR/paddlespeech_stream文件夹，用于存放下载的预训练模型.
 ```shell
-cd ../stream
+cd ../paddlespeech_stream
 ```
 从PaddleSpeech官网下载预训练模型，如果之前已经在运行过PaddleSpeech，
 则可以不用下载，它已经在目录`~/.paddlespeech/models/conformer_online_wenetspeech-zh-16k`中。
+
 ```shell
 wget -c https://paddlespeech.bj.bcebos.com/s2t/wenetspeech/asr1/asr1_chunk_conformer_wenetspeech_ckpt_1.0.0a.model.tar.gz
 ```
@@ -115,7 +146,7 @@ tar -xzvf asr1_chunk_conformer_wenetspeech_ckpt_1.0.0a.model.tar.gz -C wenetspee
 将用于Python的模型转换为C++的，这样更方便通过内存映射的方式直接读取参数，加快模型读取速度。
 
 ```shell
-../scripts/convert.py wenetspeech/exp/chunk_conformer/checkpoints/avg_10.pdparams
+../scripts/paddlespeech_convert.py wenetspeech/exp/chunk_conformer/checkpoints/avg_10.pdparams
 ```
 查看转换后的参数文件wenet_params.bin的md5码，md5码为367a285d43442ecfd9c9e5f5e1145b84，表示转换正确。
 
@@ -129,17 +160,30 @@ md5sum -b wenet_params.bin
 ```shell
 wget -c https://paddlespeech.bj.bcebos.com/PaddleAudio/zh.wav 
 ```
-非流式模型测试
+k2_rnnt2模型测试
 
 第一个参数为预训练模型存放的目录;
 第二个参数为需要识别的语音文件。
 
 ```shell
-./build/examples/fastasr_cli cli/ zh.wav
+./build/examples/k2_rnnt2_cli k2_rnnt2_cli/ zh.wav
 ```
-也可以使用c接口的例子
+
+程序输出
+```
+Audio time is 5.015000 s. len is 80240
+Model initialization takes 0.211781s
+result: "我认为跑步最重要的就是给我带来了身体健康"
+Model inference takes 0.570641s.
+```
+
+conformer_wenetspeech-zh-16k模型测试
+
+第一个参数为预训练模型存放的目录;
+第二个参数为需要识别的语音文件。
+
 ```shell
-./build/examples/fastasr_cli_c cli/ zh.wav
+./build/examples/paddlespeech_cli paddlespeech_cli/ zh.wav
 ```
 
 程序输出
@@ -150,17 +194,13 @@ result: "我认为跑步最重要的就是给我带来了身体健康"
 Model inference takes 1.101319s.
 ```
 
-流式模式测试
+conformer_online_wenetspeech-zh-16k模型测试
 
 第一个参数为预训练模型存放的目录;
 第二个参数为需要识别的语音文件。
 
 ```shell
-./build/examples/fastasr_stream stream/ zh.wav
-```
-也可以使用c接口的例子
-```shell
-./build/examples/fastasr_stream_c stream/ zh.wav
+./build/examples/paddlespeech_stream paddlespeech_stream/ zh.wav
 ```
 
 程序输出
@@ -299,7 +339,7 @@ sudo make PREFIX=/usr install
 
 运行程序
 ```shell
-./build/examples/fastasr_cli cli/ zh.wav
+./build/examples/k2_rnnt2_cli k2_rnnt2_cli/ zh.wav
 ```
 结果
 ```shell

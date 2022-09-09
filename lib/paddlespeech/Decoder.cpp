@@ -3,6 +3,9 @@
 #include <cblas.h>
 #include <stdio.h>
 
+
+using namespace paddlespeech;
+
 Decoder::Decoder(DecoderParams *params, PositionEncoding *pos_enc,
                  int vocab_size)
     : params(params), pos_enc(pos_enc), vocab_size(vocab_size)

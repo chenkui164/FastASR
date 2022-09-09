@@ -24,6 +24,8 @@ extern void basic_norm(Tensor<float> *&din, float norm);
 
 extern void findmax(float *din, int len, float &max_val, int &max_idx);
 
+extern void glu(Tensor<float> *din, Tensor<float> *dout);
+
 string pathAppend(const string &p1, const string &p2);
 
 #endif

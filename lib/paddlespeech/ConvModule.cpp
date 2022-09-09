@@ -4,20 +4,22 @@
 #include <math.h>
 #include <string.h>
 
-void glu(Tensor<float> *din, Tensor<float> *dout)
-{
-    int mm = din->buff_size / 1024;
-    int i, j;
-    for (i = 0; i < mm; i++) {
-        for (j = 0; j < 512; j++) {
-            int in_off = i * 1024 + j;
-            int out_off = i * 512 + j;
-            float a = din->buff[in_off];
-            float b = din->buff[in_off + 512];
-            dout->buff[out_off] = a / (1 + exp(-b));
-        }
-    }
-}
+using namespace paddlespeech;
+
+// void glu(Tensor<float> *din, Tensor<float> *dout)
+// {
+//     int mm = din->buff_size / 1024;
+//     int i, j;
+//     for (i = 0; i < mm; i++) {
+//         for (j = 0; j < 512; j++) {
+//             int in_off = i * 1024 + j;
+//             int out_off = i * 512 + j;
+//             float a = din->buff[in_off];
+//             float b = din->buff[in_off + 512];
+//             dout->buff[out_off] = a / (1 + exp(-b));
+//         }
+//     }
+// }
 
 ConvModule::ConvModule(EncConvParams *params, int mode)
     : params(params), mode(mode)

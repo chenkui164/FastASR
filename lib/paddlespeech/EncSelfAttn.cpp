@@ -5,6 +5,8 @@
 #include "EncSelfAttn.h"
 #include "../util.h"
 
+using namespace paddlespeech;
+
 EncSelfAttn::EncSelfAttn(EncSelfAttnParams *params) : params(params)
 {
 }

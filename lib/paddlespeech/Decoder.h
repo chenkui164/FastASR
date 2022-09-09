@@ -4,14 +4,17 @@
 
 #include <stdint.h>
 
+#include "../Tensor.h"
 #include "DecEmbedLayer.h"
+#include "ModelParams.h"
 #include "PositionEncoding.h"
 #include "SubDecoder.h"
 #include "SubEncoder.h"
-#include "../Tensor.h"
-#include "ModelParams.h"
 
 using namespace paddlespeech;
+
+namespace paddlespeech {
+
 class Decoder {
   private:
     int vocab_size;
@@ -28,5 +31,7 @@ class Decoder {
                  Tensor<float> *encoder_out, Tensor<int> *encoder_mask,
                  Tensor<float> *&dout);
 };
+
+} // namespace paddlespeech
 
 #endif

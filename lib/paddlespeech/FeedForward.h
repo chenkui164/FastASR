@@ -9,6 +9,8 @@
 #include "ModelParams.h"
 
 using namespace paddlespeech;
+namespace paddlespeech {
+
 class FeedForward {
   private:
     FeedForwardParams *params;
@@ -19,5 +21,7 @@ class FeedForward {
     ~FeedForward();
     void forward(Tensor<float> *din);
 };
+
+} // namespace paddlespeech
 
 #endif

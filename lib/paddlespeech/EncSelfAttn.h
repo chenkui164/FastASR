@@ -11,6 +11,9 @@
 #include "ModelParams.h"
 
 using namespace paddlespeech;
+
+namespace paddlespeech {
+
 class EncSelfAttn {
   private:
     EncSelfAttnParams *params;
@@ -21,5 +24,7 @@ class EncSelfAttn {
     void forward(Tensor<float> *query, Tensor<float> *key, Tensor<float> *value,
                  Tensor<float> *pe);
 };
+
+} // namespace paddlespeech
 
 #endif

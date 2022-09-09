@@ -86,7 +86,7 @@ string pathAppend(const string &p1, const string &p2)
     sep = '\\';
 #endif
 
-    if (p1[p1.length()] != sep) { // Need to add a
+    if (p1[p1.length()-1] != sep) { // Need to add a
         tmp += sep;               // path separator
         return (tmp + p2);
     } else
@@ -158,4 +158,19 @@ void log_softmax(float *din, int len)
         din[i] = log(tmp[i] / sum);
     }
     free(tmp);
+}
+
+void glu(Tensor<float> *din, Tensor<float> *dout)
+{
+    int mm = din->buff_size / 1024;
+    int i, j;
+    for (i = 0; i < mm; i++) {
+        for (j = 0; j < 512; j++) {
+            int in_off = i * 1024 + j;
+            int out_off = i * 512 + j;
+            float a = din->buff[in_off];
+            float b = din->buff[in_off + 512];
+            dout->buff[out_off] = a / (1 + exp(-b));
+        }
+    }
 }

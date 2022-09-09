@@ -6,8 +6,6 @@
 #include "../Tensor.h"
 #include "../util.h"
 #include "Encoder.h"
-// #include "FeedForward.h"
-// #include "LayerNorm.h"
 
 using namespace std;
 using namespace kaldi2;
@@ -15,13 +13,11 @@ using namespace kaldi2;
 Encoder::Encoder(EncoderParams *params, PositionEncoding *pos_enc, int mode)
     : params(params), pos_enc(pos_enc)
 {
-    // cache_size = 0;
     embed = new EmbedLayer(&params->embed);
     int i;
     for (i = 0; i < 12; i++) {
         subencoder[i] = new SubEncoder(&params->sub_encoder[i], mode);
     }
-    // after_norm = new LayerNorm(&params->after_norm, 1e-12f);
 }
 
 Encoder::~Encoder()
@@ -31,21 +27,12 @@ Encoder::~Encoder()
 
 void Encoder::reset()
 {
-
-    // int i;
-    // cache_size = 0;
-    // for (i = 0; i < 12; i++) {
-    //     subencoder[i]->reset();
-    // }
 }
 
 void Encoder::forward(Tensor<float> *&din)
 {
-    printf("ck in Encoder!!!!\n");
-
     embed->forward(din);
     int Tmax = din->size[2];
-    printf("Tmax is %d\n", Tmax);
     Tensor<float> *pe_code;
     pos_enc->fetch(Tmax, pe_code);
     int i;

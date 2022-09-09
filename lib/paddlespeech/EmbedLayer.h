@@ -8,6 +8,9 @@
 #include "ModelParams.h"
 
 using namespace paddlespeech;
+
+namespace paddlespeech {
+
 class EmbedLayer {
   private:
     EncEmbedParams *params;
@@ -23,5 +26,7 @@ class EmbedLayer {
     ~EmbedLayer();
     void forward(Tensor<float> *&din);
 };
+
+} // namespace paddlespeech
 
 #endif

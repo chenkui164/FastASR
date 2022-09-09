@@ -18,17 +18,13 @@ using namespace kaldi2;
 
 ModelImp::ModelImp(const char *path, int mode)
 {
-    string wenet_path = pathAppend(path, "wenet_param.bin");
+    string wenet_path = pathAppend(path, "wenet_params.bin");
     string vocab_path = pathAppend(path, "vocab.txt");
     vocab = new Vocab(vocab_path.c_str());
 
     fe = new FeatureExtract(mode);
 
-    cout << wenet_path << endl;
     p_helper = new ModelParamsHelper(wenet_path.c_str(), 500);
-    disp_params(
-        p_helper->params.encoder.sub_encoder[0].feedforward_macaron.w1_bias,
-        10);
 
     pos_enc = new PositionEncoding(5000);
     encoder = new Encoder(&p_helper->params.encoder, pos_enc, mode);

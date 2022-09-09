@@ -13,6 +13,9 @@
 #include "ModelParams.h"
 
 using namespace paddlespeech;
+
+namespace paddlespeech {
+
 class SubEncoder {
   private:
     Tensor<float> *in_cache;
@@ -33,5 +36,7 @@ class SubEncoder {
     void reset();
     void forward(Tensor<float> *din, Tensor<float> *pe);
 };
+
+} // namespace paddlespeech
 
 #endif

@@ -9,6 +9,8 @@
 #include "../util.h"
 
 
+using namespace paddlespeech;
+
 FeedForward::FeedForward(FeedForwardParams *params, int active_type)
     : params(params)
 {

@@ -12,6 +12,8 @@
 
 using namespace paddlespeech;
 
+namespace paddlespeech {
+
 class ConvModule {
   private:
     LayerNorm *norm;
@@ -27,5 +29,7 @@ class ConvModule {
     void reset();
     void forward(Tensor<float> *din);
 };
+
+} // namespace paddlespeech
 
 #endif
