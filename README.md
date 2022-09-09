@@ -9,7 +9,7 @@
 ，以及[kaidi2](https://github.com/k2-fsa/icefall/tree/master/egs/wenetspeech/ASR)的rnnt2。
 
 * **非流式模型**：每次识别是以句子为单位，所以实时性会差一些，但准确率会高一些。
-* **流式模型**：每次识别是以句子为单位，所以实时性会差一些，但准确率会高一些。  
+* **流式模型**：模型的输入是语音流，并实时返回语音识别的结果，但是准确率会下降些。  
 
 k2_rnnt2和conformer_wenetspeech-zh-16k是属于非流式模型，
 conformer_online_wenetspeech-zh-16k属于流式模型。
