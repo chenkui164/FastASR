@@ -4,6 +4,11 @@
 
 注意：在安装vs2022时，需要安装linux 开发组件以支持cmakelists.txt工程。
 
+
+## demo
+
+[示例](images/smaple/png)
+
 ## 准备windows库依赖库
 
 build fftw3 (from a prebuild version to generate libs)
