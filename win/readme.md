@@ -8,7 +8,7 @@
 ## demo
 
 <div align="center">
-    <img src=images/sample.png" width="80%" height="80%">
+    <img src="images/sample.png" width="80%" height="80%">
 </div>
 
 ## 准备windows库依赖库
