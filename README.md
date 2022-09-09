@@ -61,6 +61,8 @@ sudo brew install fftw
 sudo brew install openblas
 ```
 ### 编译源码
+
+#### Build for Linux
 下载最新版的源码
 ```shell
 git clone https://github.com/chenkui164/FastASR.git
@@ -74,6 +76,9 @@ cmake ..
 make
 ```
 
+####  Build for Windows
+
+[Windows编译指南](win/readme.md)
 ### 下载预训练模型
 
 #### k2_rnnt2预训练模型下载
