@@ -79,6 +79,10 @@ make
 ####  Build for Windows
 
 [Windows编译指南](win/readme.md)
+
+使用Visual studio 2022 打开cmakelist.txt 编译即可。
+需要在vs2022安装linux开发组件。
+
 ### 下载预训练模型
 
 #### k2_rnnt2预训练模型下载
