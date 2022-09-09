@@ -61,6 +61,8 @@ sudo brew install fftw
 sudo brew install openblas
 ```
 ### 编译源码
+
+#### Build for Linux
 下载最新版的源码
 ```shell
 git clone https://github.com/chenkui164/FastASR.git
@@ -73,6 +75,13 @@ cd build
 cmake ..
 make
 ```
+
+####  Build for Windows
+
+[Windows编译指南](win/readme.md)
+
+使用Visual studio 2022 打开cmakelist.txt 编译即可。
+需要在vs2022安装linux开发组件。
 
 ### 下载预训练模型
 

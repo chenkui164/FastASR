@@ -1,5 +1,9 @@
 #include <iostream>
+#ifndef _WIN32
 #include <sys/time.h>
+#else
+#include <win_func.h>
+#endif
 
 #include <Audio.h>
 #include <Model.h>

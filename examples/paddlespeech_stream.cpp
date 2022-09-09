@@ -1,6 +1,9 @@
 #include <iostream>
+#ifndef _WIN32
 #include <sys/time.h> // for gettimeofday()
-
+#else
+#include <win_func.h>
+#endif
 #include "Audio.h"
 #include "FeatureExtract.h"
 #include "Model.h"
