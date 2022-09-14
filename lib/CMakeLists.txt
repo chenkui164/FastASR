@@ -10,7 +10,7 @@ set(files ${files1} ${files2} ${files3})
 
 message("${files}")
 
-add_library(fastasr SHARED ${files})
+add_library(fastasr ${files})
 
 if(WIN32)
 

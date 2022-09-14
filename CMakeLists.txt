@@ -4,7 +4,7 @@ set (CMAKE_CXX_STANDARD 11)
 
 project(FastASR)
 
-set(CMAKE_CXX_FLAGS, "-fPIC")
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 add_subdirectory("pybind11")
 add_subdirectory(lib)
