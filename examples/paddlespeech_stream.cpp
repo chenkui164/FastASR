@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     gettimeofday(&end, NULL);
     long seconds = (end.tv_sec - start.tv_sec);
     long micros = ((seconds * 1000000) + end.tv_usec) - (start.tv_usec);
-    printf("Model initialization takes %lfs\n", (double)micros / 1000000);
+    printf("Model initialization takes %lfs.\n", (double)micros / 1000000);
 
     float *buff;
     int sum = 0;
@@ -36,11 +36,11 @@ int main(int argc, char *argv[])
         flag = audio.fetch_chunck(buff, len);
         sum += len;
         string msg = mm->forward_chunk(buff, len, flag);
-        cout << "current result: \"" << msg << "\"" << endl;
+        cout << "Current Result: \"" << msg << "\"." << endl;
     }
     string msg = mm->rescoring();
     gettimeofday(&end, NULL);
-    cout << "final result: \"" << msg << "\"" << endl;
+    cout << "Final Result: \"" << msg << "\"." << endl;
 
     seconds = (end.tv_sec - start.tv_sec);
     micros = ((seconds * 1000000) + end.tv_usec) - (start.tv_usec);

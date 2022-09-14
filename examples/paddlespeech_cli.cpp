@@ -7,7 +7,6 @@
 
 #include <Audio.h>
 #include <Model.h>
-// #include "Model.h"
 
 using namespace std;
 
@@ -24,7 +23,7 @@ int main(int argc, char *argv[])
     gettimeofday(&end, NULL);
     long seconds = (end.tv_sec - start.tv_sec);
     long micros = ((seconds * 1000000) + end.tv_usec) - (start.tv_usec);
-    printf("Model initialization takes %lfs\n", (double)micros / 1000000);
+    printf("Model initialization takes %lfs.\n", (double)micros / 1000000);
 
     float *buff;
     int len;
@@ -34,7 +33,7 @@ int main(int argc, char *argv[])
     string msg = mm->forward(buff, len, flag);
     gettimeofday(&end, NULL);
 
-    cout << "result: \"" << msg << "\"" << endl;
+    cout << "Result: \"" << msg << "\"." << endl;
 
     seconds = (end.tv_sec - start.tv_sec);
     micros = ((seconds * 1000000) + end.tv_usec) - (start.tv_usec);

@@ -3,15 +3,15 @@
 
 if(WIN32)
 
-	if(CMAKE_CL_64)
+    if(CMAKE_CL_64)
 
-	link_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../win/lib/x64 )
-	else()
-	link_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../win/lib/x86 )
-	endif()
+        link_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../win/lib/x64 )
+    else()
+        link_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../win/lib/x86 )
+    endif()
 
-	include_directories(../win/include ../win/include/openblas )
-	
+    include_directories(../win/include ../win/include/openblas )
+
 else()
 
 endif()
@@ -57,6 +57,9 @@ target_include_directories(paddlespeech_stream PUBLIC
 
 
 
+configure_file(k2_rnnt2_cli.py k2_rnnt2_cli.py COPYONLY)
+configure_file(paddlespeech_cli.py paddlespeech_cli.py COPYONLY)
+configure_file(paddlespeech_stream.py paddlespeech_stream.py COPYONLY)
 
 # add_executable(fastasr_cli_c fastasr_cli_c.c)
 

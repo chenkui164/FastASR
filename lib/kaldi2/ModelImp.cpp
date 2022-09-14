@@ -38,6 +38,7 @@ ModelImp::~ModelImp()
 
 void ModelImp::reset()
 {
+    fe->reset();
 }
 
 string ModelImp::greedy_search(Tensor<float> *&encoder_out)
