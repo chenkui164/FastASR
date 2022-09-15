@@ -32,7 +32,7 @@ void SpeechWrap::update(int offset)
 {
     int in_offset = offset - cache_size;
     cache_size = (total_size - offset);
-    memcpy(cache, in + in_offset, cache_size * sizeof(int16_t));
+    memcpy(cache, in + in_offset, cache_size * sizeof(float));
 }
 
 float &SpeechWrap::operator[](int i)
