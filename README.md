@@ -30,14 +30,11 @@ conformer_online_wenetspeech-zh-16k属于流式模型。
 * **效率高**：算法中大量使用指针，减少原有算法中reshape和permute的操作，减少不必要的数据拷贝，从而提升算法性能。
 
 
-本项目最终生成的是动态库libfastasr.so和静态库libfastasr.a文件，方便用户的调用。
-在examples目录下是C++和C调用库的例子，以供用户参考。
+针对C++用户和python用户，本项目分别生成了静态库libfastasr.a和PyFastASR.XXX模块，调用方法可以参考example目录中的例子。
+
 
 ### 未完成工作
 * 量化和压缩模型
-* 支持python接口调用
-* 根据流式模型增加一些例子
-* 将来会支持Windows平台和MacOS平台
 
 ## 快速上手
 ### Ubuntu 安装依赖
@@ -50,6 +47,11 @@ sudo apt-get install libfftw3-dev libfftw3-single3
 ```shell
 sudo apt-get install libopenblas-dev
 ```
+安装python环境
+```shell
+sudo apt-get install python3 python3-dev
+```
+
 ### MacOS 安装依赖
 
 安装依赖库fftw
@@ -67,12 +69,21 @@ sudo brew install openblas
 ```shell
 git clone https://github.com/chenkui164/FastASR.git
 ```
-编译最新版的源码
+编译最新版的源码，
 ```shell
 cd FastASR/
 mkdir build
 cd build
 cmake ..
+make
+```
+编译python模块，PyFastASR.XXX。项目默认配置环境下并不编译python模块, 需要手动开启
+
+```shell
+cd FastASR/
+mkdir build
+cd build
+cmake -DFASTASR_BUILD_PYTHON_MODULE=ON ..
 make
 ```
 
@@ -164,14 +175,14 @@ md5sum -b wenet_params.bin
 ```
 
 
-#### 测试例子
+### 测试例子
 进入项目的根目录FastASR下载用于测试的wav文件
 ```shell
 wget -c https://paddlespeech.bj.bcebos.com/PaddleAudio/zh.wav 
 ```
-k2_rnnt2模型测试
+#### k2_rnnt2模型测试
 
-第一个参数为预训练模型存放的目录;
+第一个参数为预训练模型存放的目录;  
 第二个参数为需要识别的语音文件。
 
 ```shell
@@ -186,9 +197,28 @@ result: "我认为跑步最重要的就是给我带来了身体健康"
 Model inference takes 0.570641s.
 ```
 
-conformer_wenetspeech-zh-16k模型测试
+PyFastASR.XXX模块测试
+添加PyFastASR.XXX模块的路径
 
-第一个参数为预训练模型存放的目录;
+```shell
+export PYTHONPATH=/home/xxx/xxxx/FastASR/build/lib/:$PYTHONPATH
+```
+
+```shell
+python ./build/examples/k2_rnnt2_cli.py k2_rnnt2_cli/ zh.wav
+```
+
+程序输出
+```
+Audio time is 4.9968125s. len is 79949.
+Model initialization takes 0.8s.
+Result: "我认为跑步最重要的就是给我带来了身体健康".
+Model inference takes 0.57s.
+```
+
+#### conformer_wenetspeech-zh-16k模型测试
+
+第一个参数为预训练模型存放的目录;  
 第二个参数为需要识别的语音文件。
 
 ```shell
@@ -203,7 +233,21 @@ result: "我认为跑步最重要的就是给我带来了身体健康"
 Model inference takes 1.101319s.
 ```
 
-conformer_online_wenetspeech-zh-16k模型测试
+PyFastASR.XXX模块测试
+
+```shell
+python ./build/examples/paddlespeech_cli.py paddlespeech_cli/ zh.wav
+```
+
+程序输出
+```
+Audio time is 4.9968125s. len is 79949.
+Model initialization takes 1.1s.
+Result: "我认为跑步最重要的就是给我带来身体健康".
+Model inference takes 1.1s.
+```
+
+#### conformer_online_wenetspeech-zh-16k模型测试
 
 第一个参数为预训练模型存放的目录;
 第二个参数为需要识别的语音文件。
@@ -276,6 +320,12 @@ current result: "我认为跑步最重要的就是给我带来了身体健康"
 current result: "我认为跑步最重要的就是给我带来了身体健康"
 final result: "我认为跑步最重要的就是给我带来了身体健康"
 Model inference takes 1.657996s.
+```
+
+PyFastASR.XXX模块测试
+
+```shell
+python ./build/examples/paddlespeech_stream.py paddlespeech_stream/ zh.wav
 ```
 
 ## 树莓派4B上优化部署

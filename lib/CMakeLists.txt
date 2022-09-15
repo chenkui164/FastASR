@@ -14,17 +14,16 @@ add_library(fastasr ${files})
 
 if(WIN32)
 
-	if(CMAKE_CL_64)
+    if(CMAKE_CL_64)
+        link_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../win/lib/x64 )
+    else()
+        link_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../win/lib/x86 )
+    endif()
 
-	link_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../win/lib/x64 )
-	else()
-	link_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../win/lib/x86 )
-	endif()
-
-	include_directories(../win/include ../win/include/openblas )
-	set(EXTRA_LIBS libfftw3f-3 libopenblas)
+    include_directories(../win/include ../win/include/openblas )
+    set(EXTRA_LIBS libfftw3f-3 libopenblas)
 else()
-	set(EXTRA_LIBS fftw3f openblas)
+    set(EXTRA_LIBS fftw3f openblas)
 endif()
 
 
@@ -39,5 +38,8 @@ target_link_directories(fastasr PUBLIC "/usr/local/opt/fftw/lib")
 target_include_directories(fastasr PUBLIC "/usr/local/opt/openblas/include")
 target_link_directories(fastasr PUBLIC "/usr/local/opt/openblas/lib")
 
-pybind11_add_module(PyFastASR PyFastASR.cpp)
-target_link_libraries(PyFastASR PUBLIC fastasr)
+
+if(FASTASR_BUILD_PYTHON_MODULE)
+    pybind11_add_module(PyFastASR PyFastASR.cpp)
+    target_link_libraries(PyFastASR PUBLIC fastasr)
+endif()
