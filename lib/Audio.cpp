@@ -167,16 +167,18 @@ int Audio::fetch_chunck(float *&dout, int len)
 
 int Audio::fetch(float *&dout, int &len, int &flag)
 {
+    if (frame_queue.size() > 0) {
+        AudioFrame *frame = frame_queue.front();
+        frame_queue.pop();
 
-    AudioFrame *frame = frame_queue.front();
-    frame_queue.pop();
-
-    dout = speech_data + frame->get_start();
-    len = frame->get_len();
-    delete frame;
-    flag = S_END;
-
-    return frame_queue.size();
+        dout = speech_data + frame->get_start();
+        len = frame->get_len();
+        delete frame;
+        flag = S_END;
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 void Audio::padding()
