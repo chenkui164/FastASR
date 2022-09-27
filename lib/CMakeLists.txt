@@ -21,9 +21,9 @@ if(WIN32)
     endif()
 
     include_directories(../win/include ../win/include/openblas )
-    set(EXTRA_LIBS libfftw3f-3 libopenblas)
+    set(EXTRA_LIBS libfftw3f-3 libopenblas webrtcvad)
 else()
-    set(EXTRA_LIBS fftw3f openblas)
+    set(EXTRA_LIBS fftw3f openblas webrtcvad pthread)
 endif()
 
 

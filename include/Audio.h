@@ -2,9 +2,29 @@
 #ifndef AUDIO_H
 #define AUDIO_H
 
-#include <stdint.h>
 #include <ComDefine.h>
+#include <queue>
+#include <stdint.h>
 
+using namespace std;
+
+class AudioFrame {
+  private:
+    int start;
+    int end;
+    int len;
+
+  public:
+    AudioFrame();
+    AudioFrame(int len);
+
+    ~AudioFrame();
+    int set_start(int val);
+    int set_end(int val, int max_len);
+    int get_start();
+    int get_len();
+    int disp();
+};
 
 class Audio {
   private:
@@ -16,6 +36,7 @@ class Audio {
     int offset;
     float align_size;
     int data_type;
+    queue<AudioFrame *> frame_queue;
 
   public:
     Audio(int data_type);
@@ -24,8 +45,9 @@ class Audio {
     void disp();
     void loadwav(const char *filename);
     int fetch_chunck(float *&dout, int len);
-    int fetch(float *&dout, int &len);
+    int fetch(float *&dout, int &len, int &flag);
     void padding();
+    void split();
 };
 
 #endif
