@@ -11,5 +11,6 @@ option(FASTASR_BUILD_PYTHON_MODULE "build python module, using FastASR in Python
 if(FASTASR_BUILD_PYTHON_MODULE)
     add_subdirectory("pybind11")
 endif()
+
 add_subdirectory(lib)
 add_subdirectory(examples)
