@@ -14,6 +14,9 @@
 k2_rnnt2和conformer_wenetspeech-zh-16k是属于非流式模型，
 conformer_online_wenetspeech-zh-16k属于流式模型。
 
+目前通过使用VAD技术, 非流式模型支持大段的长语音识别。
+
+
 上面提到的这些模型都是基于深度学习框架（paddlepaddle或pytorch）实现的, 本身的性能已经很不错了，即使在没有GPU的个人电脑上运行，
 也能满足实时性的要求（如:时长为10s的语音，推理时间小于10s，即可满足实时性）。
 
@@ -91,16 +94,16 @@ make
 
 [Windows编译指南](win/readme.md)
 
-使用Visual studio 2022 打开cmakelist.txt 编译即可。
+使用Visual studio 2022 打开CMakeLists.txt编译即可。
 需要在vs2022安装linux开发组件。
 
 ### 下载预训练模型
 
 #### k2_rnnt2预训练模型下载
 
-进入FastASR/k2_rnnt2_cli文件夹，用于存放下载的预训练模型.
+进入FastASR/models/k2_rnnt2_cli文件夹，用于存放下载的预训练模型.
 ```shell
-cd ../k2_rnnt2_cli
+cd ../models/k2_rnnt2_cli
 ```
 从huggingface官网下载预训练模型，预训练模型所在的[仓库地址](https://huggingface.co/luomingshuang/icefall_asr_wenetspeech_pruned_transducer_stateless2)
 也可通过命令一键下载。
@@ -120,9 +123,9 @@ wget -c https://huggingface.co/luomingshuang/icefall_asr_wenetspeech_pruned_tran
 md5sum -b wenet_params.bin
 ```
 #### conformer_wenetspeech-zh-16k预训练模型下载
-进入FastASR/paddlespeech_cli文件夹，用于存放下载的预训练模型.
+进入FastASR/models/paddlespeech_cli文件夹，用于存放下载的预训练模型.
 ```shell
-cd ../paddlespeech_cli
+cd ../models/paddlespeech_cli
 ```
 从PaddleSpeech官网下载预训练模型，如果之前已经在运行过PaddleSpeech，
 则可以不用下载，它已经在目录`~/.paddlespeech/models/conformer_wenetspeech-zh-16k`中。
@@ -147,9 +150,9 @@ md5sum -b wenet_params.bin
 ```
 
 #### 流模式预训练模型下载
-进入FastASR/paddlespeech_stream文件夹，用于存放下载的预训练模型.
+进入FastASR/models/paddlespeech_stream文件夹，用于存放下载的预训练模型.
 ```shell
-cd ../paddlespeech_stream
+cd ../models/paddlespeech_stream
 ```
 从PaddleSpeech官网下载预训练模型，如果之前已经在运行过PaddleSpeech，
 则可以不用下载，它已经在目录`~/.paddlespeech/models/conformer_online_wenetspeech-zh-16k`中。
@@ -177,8 +180,17 @@ md5sum -b wenet_params.bin
 
 ### 测试例子
 进入项目的根目录FastASR下载用于测试的wav文件
+
+下载时长为5S的测试音频
+
 ```shell
 wget -c https://paddlespeech.bj.bcebos.com/PaddleAudio/zh.wav 
+```
+
+下载时长为30min的测试音频
+
+```shell
+wget -c https://github.com/chenkui164/FastASR/releases/download/V0.01/long.wav
 ```
 #### k2_rnnt2模型测试
 
@@ -186,7 +198,7 @@ wget -c https://paddlespeech.bj.bcebos.com/PaddleAudio/zh.wav
 第二个参数为需要识别的语音文件。
 
 ```shell
-./build/examples/k2_rnnt2_cli k2_rnnt2_cli/ zh.wav
+./build/examples/k2_rnnt2_cli models/k2_rnnt2_cli/ zh.wav
 ```
 
 程序输出
@@ -197,6 +209,28 @@ result: "我认为跑步最重要的就是给我带来了身体健康"
 Model inference takes 0.570641s.
 ```
 
+长语音测试
+
+```shell
+./build/examples/k2_rnnt2_cli models/k2_rnnt2_cli/ long.wav
+```
+
+程序输出
+```
+Audio time is 1781.655518 s. len is 28506489
+Model initialization takes 0.172187s.
+Result: "听众朋友您下面将要听到的是世界文学宝库中的珍品海明威最优秀的作品老人与海
+................................................................................
+................................................................................
+................................................................................
+我也许不像我自以为那样的强壮了可是我懂得不少窍门儿而且有决心啊你该就去睡觉这样明儿
+早上才精神饱满我要把这些东西送回露台饭店去啊哦好那么祝你晚安早上我去叫醒你你是我的
+闹钟男孩说年纪是我的闹钟啊老人说为什么老头儿醒得那么早啊难道是要让白天长些吗我不知
+道我只知道少年睡得沉起得晚啊嗯我记在心上了到时候会去叫醒你的我不愿让船主人来叫醒我
+这样似乎我比他差劲儿了哼我懂安睡吧老大爷男孩儿走出屋去"
+Model inference takes 186.848961s.
+```
+
 PyFastASR.XXX模块测试
 添加PyFastASR.XXX模块的路径
 
@@ -205,7 +239,7 @@ export PYTHONPATH=/home/xxx/xxxx/FastASR/build/lib/:$PYTHONPATH
 ```
 
 ```shell
-python ./build/examples/k2_rnnt2_cli.py k2_rnnt2_cli/ zh.wav
+python ./build/examples/k2_rnnt2_cli.py models/k2_rnnt2_cli/ zh.wav
 ```
 
 程序输出
@@ -222,7 +256,7 @@ Model inference takes 0.57s.
 第二个参数为需要识别的语音文件。
 
 ```shell
-./build/examples/paddlespeech_cli paddlespeech_cli/ zh.wav
+./build/examples/paddlespeech_cli models/paddlespeech_cli/ zh.wav
 ```
 
 程序输出
@@ -233,10 +267,34 @@ result: "我认为跑步最重要的就是给我带来了身体健康"
 Model inference takes 1.101319s.
 ```
 
+长语音测试
+
+```shell
+./build/examples/paddlespeech_cli models/paddlespeech_cli/ long.wav
+```
+
+程序输出
+```
+Audio time is 1781.655518 s. len is 28506489
+Model initialization takes 0.184894s.
+Result: "听众朋友您下面将要听到的是世界文学宝库中珍品海明威最优秀的作品老人于海老
+................................................................................
+................................................................................
+................................................................................
+好的渔夫是你不我知道还要比我强的哪里好渔夫很多还有些很了不起的不过点呱呱的只有你
+谢谢你了你说得叫我高兴我希望不要来一条大鱼打的能证明我们都讲错了这样的鱼是没有的
+只要你还是像你说的那样强壮嗯我也许不像我自以为那样的强壮可是我懂得不少窍门而且有
+决心你该就去睡觉这样明儿早上才精神饱满我要把这些东西送回露台饭店去好那么祝你晚安
+早上我去叫醒你你是我的闹钟男孩说年纪是我的闹钟老人说为什么老头醒得那么早啊难道是
+要让白天长些吗我不知道我只知道少年睡得沉起得晚嗯我记得心上啦到时候会去叫醒你的我
+不愿让船主人来叫醒我这样似乎我比他差劲儿了我懂安睡吧老大爷男孩走出屋去".
+Model inference takes 351.067497s.
+```
+
 PyFastASR.XXX模块测试
 
 ```shell
-python ./build/examples/paddlespeech_cli.py paddlespeech_cli/ zh.wav
+python ./build/examples/paddlespeech_cli.py models/paddlespeech_cli/ zh.wav
 ```
 
 程序输出
@@ -253,7 +311,7 @@ Model inference takes 1.1s.
 第二个参数为需要识别的语音文件。
 
 ```shell
-./build/examples/paddlespeech_stream paddlespeech_stream/ zh.wav
+./build/examples/paddlespeech_stream models/paddlespeech_stream/ zh.wav
 ```
 
 程序输出
@@ -398,7 +456,7 @@ sudo make PREFIX=/usr install
 
 运行程序
 ```shell
-./build/examples/k2_rnnt2_cli k2_rnnt2_cli/ zh.wav
+./build/examples/k2_rnnt2_cli models/k2_rnnt2_cli/ zh.wav
 ```
 结果
 ```shell
