@@ -26,6 +26,7 @@ int main(int argc, char *argv[])
     printf("Model initialization takes %lfs.\n", (double)micros / 1000000);
     audio.split();
 
+    setbuf(stdout, NULL);
     cout << "Result: \"";
     gettimeofday(&start, NULL);
     float *buff;
