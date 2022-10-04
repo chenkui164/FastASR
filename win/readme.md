@@ -6,15 +6,19 @@
 
 
 ## Demo
-CPU:  i7-7820HQ CPU @ Windows 11
+CPU:  i7-7820HQ @ Windows 11
 
 <div align="center">
     <img src="images/sample.png" width="80%" height="80%">
 </div>
 
-## 准备windows库依赖库
 
-build fftw3 (from a prebuild version to generate libs)
+
+## 准备windows依赖库 （专业用户参考，普通用户无需考虑）
+
+
+
+### build fftw3 (from a prebuild version to generate libs)
 
 https://blog.csdn.net/NICAI001/article/details/116887842
 

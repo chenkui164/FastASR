@@ -24,6 +24,13 @@ if(WIN32)
     set(EXTRA_LIBS libfftw3f-3 libopenblas webrtcvad)
 else()
     set(EXTRA_LIBS fftw3f openblas webrtcvad pthread)
+    
+    target_include_directories(fastasr PUBLIC "/usr/local/opt/fftw/include")
+    target_link_directories(fastasr PUBLIC "/usr/local/opt/fftw/lib")
+
+    target_include_directories(fastasr PUBLIC "/usr/local/opt/openblas/include")
+    target_link_directories(fastasr PUBLIC "/usr/local/opt/openblas/lib")
+
 endif()
 
 
@@ -32,11 +39,6 @@ endif()
 include_directories("../include")
 target_link_libraries(fastasr PUBLIC ${EXTRA_LIBS})
 
-target_include_directories(fastasr PUBLIC "/usr/local/opt/fftw/include")
-target_link_directories(fastasr PUBLIC "/usr/local/opt/fftw/lib")
-
-target_include_directories(fastasr PUBLIC "/usr/local/opt/openblas/include")
-target_link_directories(fastasr PUBLIC "/usr/local/opt/openblas/lib")
 
 
 if(FASTASR_BUILD_PYTHON_MODULE)
