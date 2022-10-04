@@ -6,7 +6,7 @@
 
 
 ## Demo
-CPU:  i7-7820HQ CPU @ Windows 11
+CPU:  i7-7820HQ @ Windows 11
 
 <div align="center">
     <img src="images/sample.png" width="80%" height="80%">
