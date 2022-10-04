@@ -14,10 +14,9 @@ CPU:  i7-7820HQ @ Windows 11
 
 
 
-## 准备windows库依赖库
+## 准备windows依赖库 （专业用户参考，普通用户无需考虑）
 
 
-### 所有依赖的库文件及动态库已经在仓库中提供。以下文本给专业人士参考，普通用户可以忽略。
 
 build fftw3 (from a prebuild version to generate libs)
 
