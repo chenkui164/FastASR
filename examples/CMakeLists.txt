@@ -2,11 +2,10 @@
 
 if(WIN32)
     if(CMAKE_CL_64)
-        link_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../win/lib/x64 )
+        link_directories( ${CMAKE_SOURCE_DIR}/win/lib/x64 )
     else()
-        link_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../win/lib/x86 )
+        link_directories( ${CMAKE_SOURCE_DIR}/win/lib/x86 )
     endif()
-    include_directories(../win/include ../win/include/openblas )
 endif()
 
 set(EXTRA_LIBS fastasr)

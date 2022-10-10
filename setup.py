@@ -45,7 +45,6 @@ class CMakeBuild(build_ext):
         os.makedirs(self.build_lib, exist_ok=True)
 
         if is_windows():
-            print(f"build command is:\n{build_cmd}")
             ret = os.system(
                 f"cmake {cmake_args} -B {self.build_temp} -S {ext.sourcedir}"
             )
@@ -53,13 +52,13 @@ class CMakeBuild(build_ext):
                 raise Exception("Failed to configure")
 
             ret = os.system(
-                f"cmake --build {self.build_temp} --target _fastasr --config Release -- -m"
+                f"cmake --build {self.build_temp} --config Release"
             )
             if ret != 0:
                 raise Exception("Failed to build fastasr")
 
             ret = os.system(
-                f"cmake --build {self.build_temp} --target install --config Release -- -m"
+                f"cmake --install {self.build_temp} --config Release"
             )
             if ret != 0:
                 raise Exception("Failed to install fastasr")
