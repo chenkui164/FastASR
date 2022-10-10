@@ -1,11 +1,8 @@
 
-
 file(GLOB files1 "*.cpp")
 file(GLOB files2 "paddlespeech/*.cpp")
 file(GLOB files3 "kaldi2/*.cpp")
 
-# list(REMOVE_ITEM files1 "/home/ck/work/FastASR/lib/PyFastASR.cpp")
-list(FILTER files1 EXCLUDE REGEX ".*PyFastASR.cpp")
 set(files ${files1} ${files2} ${files3})
 
 message("${files}")
@@ -24,7 +21,7 @@ if(WIN32)
     set(EXTRA_LIBS libfftw3f-3 libopenblas webrtcvad)
 else()
     set(EXTRA_LIBS fftw3f openblas webrtcvad pthread)
-    
+
     target_include_directories(fastasr PUBLIC "/usr/local/opt/fftw/include")
     target_link_directories(fastasr PUBLIC "/usr/local/opt/fftw/lib")
 
@@ -35,13 +32,8 @@ endif()
 
 
 
-# target_include_directories(fastasr PUBLIC "paddlespeech")
-include_directories("../include")
+include_directories(${CMAKE_SOURCE_DIR}/include)
 target_link_libraries(fastasr PUBLIC ${EXTRA_LIBS})
 
 
 
-if(FASTASR_BUILD_PYTHON_MODULE)
-    pybind11_add_module(PyFastASR PyFastASR.cpp)
-    target_link_libraries(PyFastASR PUBLIC fastasr)
-endif()

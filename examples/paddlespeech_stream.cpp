@@ -5,7 +5,6 @@
 #include <win_func.h>
 #endif
 #include "Audio.h"
-#include "FeatureExtract.h"
 #include "Model.h"
 
 using namespace std;

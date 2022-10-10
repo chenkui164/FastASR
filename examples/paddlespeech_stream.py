@@ -1,4 +1,4 @@
-import PyFastASR
+import fastasr
 import math
 import numpy as np
 import soundfile as sf
@@ -20,7 +20,7 @@ audio_len = data.size / samplerate
 print("Audio time is {}s. len is {}.".format(audio_len, data.size))
 
 start_time = time.time()
-p = PyFastASR.Model(param_path, 1)
+p = fastasr.Model(param_path, 1)
 p.reset()
 end_time = time.time()
 print("Model initialization takes {:.2}s.".format(end_time - start_time))

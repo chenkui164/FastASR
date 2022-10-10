@@ -13,5 +13,5 @@ if(FASTASR_BUILD_PYTHON_MODULE)
 endif()
 
 add_subdirectory("./third_party/webrtc")
-add_subdirectory(lib)
+add_subdirectory(src)
 add_subdirectory(examples)
