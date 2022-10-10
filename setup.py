@@ -3,9 +3,14 @@ from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
 from setuptools import find_packages
 from pathlib import Path
+import platform
 
 
 requirements = []
+
+
+def is_windows():
+    return platform.system() == "Windows"
 
 
 class CMakeExtension(Extension):
@@ -39,8 +44,28 @@ class CMakeBuild(build_ext):
         os.makedirs(self.build_temp, exist_ok=True)
         os.makedirs(self.build_lib, exist_ok=True)
 
-        ret = os.system(
-            f"cd {self.build_temp};cmake {cmake_args} {ext.sourcedir};make -j8 install;pwd")
+        if is_windows():
+            print(f"build command is:\n{build_cmd}")
+            ret = os.system(
+                f"cmake {cmake_args} -B {self.build_temp} -S {ext.sourcedir}"
+            )
+            if ret != 0:
+                raise Exception("Failed to configure")
+
+            ret = os.system(
+                f"cmake --build {self.build_temp} --target _fastasr --config Release -- -m"
+            )
+            if ret != 0:
+                raise Exception("Failed to build fastasr")
+
+            ret = os.system(
+                f"cmake --build {self.build_temp} --target install --config Release -- -m"
+            )
+            if ret != 0:
+                raise Exception("Failed to install fastasr")
+        else:
+            ret = os.system(
+                f"cd {self.build_temp};cmake {cmake_args} {ext.sourcedir};make -j8 install;pwd")
 
 
 setup(
