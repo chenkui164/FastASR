@@ -30,6 +30,7 @@ jobs:
       env:
         CIBW_ARCHS_MACOS: x86_64 universal2 arm64
         CIBW_ARCHS_LINUX: x86_64 i686
+        CIBW_BEFORE_BUILD: yum -y install openblas-devel fftw-devel
 
     - name: Show files
       run: ls -lh wheelhouse
