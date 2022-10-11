@@ -23,8 +23,13 @@ else()
     set(EXTRA_LIBS fftw3f openblas webrtcvad pthread)
     target_include_directories(fastasr PUBLIC "/usr/local/opt/fftw/include")
     target_link_directories(fastasr PUBLIC "/usr/local/opt/fftw/lib")
+
     target_include_directories(fastasr PUBLIC "/usr/local/opt/openblas/include")
     target_link_directories(fastasr PUBLIC "/usr/local/opt/openblas/lib")
+
+    target_include_directories(fastasr PUBLIC "/usr/include/openblas")
+    target_include_directories(fastasr PUBLIC "/usr/include")
+    target_link_directories(fastasr PUBLIC "/usr/lib64")
 
 endif()
 
