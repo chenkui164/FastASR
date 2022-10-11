@@ -6,7 +6,7 @@ from pathlib import Path
 import platform
 
 
-requirements = []
+requirements = ["cmake"]
 
 
 def is_windows():
