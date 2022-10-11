@@ -3,28 +3,43 @@ name: Python package
 on: [push]
 
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
+        os: [ubuntu-20.04, windows-2019]
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install build
-          sudo apt-get install libfftw3-dev libfftw3-single3
-          sudo apt-get install libopenblas-dev
-      - name: build
-        run: |
-          python -m build
-      - name: 
-        run: |
-          ls -al
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: brew uninstall libomp
+      if: matrix.os == 'macos-11'
+      run: |
+        brew uninstall --ignore-dependencies libomp
+
+    - name: Build wheels
+      uses: pypa/cibuildwheel@v2.8.1
+      env:
+        CIBW_ARCHS_MACOS: x86_64 universal2 arm64
+        CIBW_ARCHS_LINUX: x86_64 i686
+
+    - name: Show files
+      run: ls -lh wheelhouse
+      shell: bash
+
+    - name: Verify clean directory
+      run: git diff --exit-code
+      shell: bash
+
+    - name: Upload wheels
+      uses: actions/upload-artifact@v3
+      with:
+        path: wheelhouse/*.whl
