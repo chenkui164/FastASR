@@ -22,7 +22,7 @@ jobs:
           pip install build
       - name: build
         run: |
-          pip -m build
+          python -m build
       - name: 
         run: |
           ls -al
