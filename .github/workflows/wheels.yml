@@ -29,8 +29,8 @@ jobs:
         CIBW_BEFORE_BUILD: yum -y install fftw-devel
         CIBW_SKIP: pp*
         CIBW_SKIP: pp*
-        CIBW_BUILD: *-manylinux_x86_64
-        CIBW_BUILD: *-manylinux_i686
+        CIBW_BUILD: "*-manylinux_x86_64"
+        CIBW_BUILD: "*-manylinux_i686"
 
     - name: Show files
       run: ls -lh wheelhouse
