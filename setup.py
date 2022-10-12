@@ -4,9 +4,10 @@ from setuptools.command.build_ext import build_ext
 from setuptools import find_packages
 from pathlib import Path
 import platform
+import pythran_openblas as openblas
 
 
-requirements = ["cmake"]
+requirements = []
 
 
 def is_windows():
@@ -37,9 +38,13 @@ class CMakeBuild(build_ext):
         print('ext.sourcedir is {}'.format(ext.sourcedir))
 
         print('***************************')
+        # print(' openblas.include_dirs is {}'.format(openblas.include_dirs[0]))
+        # print(' openblas.library_dir is {}'.format(openblas.library_dir))
 
         cmake_args = "-DFASTASR_BUILD_PYTHON_MODULE=ON"
         cmake_args += f" -DCMAKE_INSTALL_PREFIX={Path(self.build_lib).resolve()}"
+        cmake_args += f" -DOPENBLAS_INCLUDE_DIR={openblas.include_dirs[0]}"
+        cmake_args += f" -DOPENBLAS_LIBRARY_DIR={openblas.library_dir}"
 
         os.makedirs(self.build_temp, exist_ok=True)
         os.makedirs(self.build_lib, exist_ok=True)
@@ -63,8 +68,16 @@ class CMakeBuild(build_ext):
             if ret != 0:
                 raise Exception("Failed to install fastasr")
         else:
+            ret = os.system("echo --------------------------------")
+
+            self.env = os.popen('which python').read()
+            self.env = os.path.dirname(self.env)
+            self.env = os.path.dirname(self.env)
+            print('self.env is {}'.format(self.env))
+            ret = os.system("echo $PATH")
+            ret = os.system("echo --------------------------------")
             ret = os.system(
-                f"cd {self.build_temp};cmake {cmake_args} {ext.sourcedir};make -j8 install;pwd")
+                f"export VIRTUAL_ENV={self.env};cd {self.build_temp};cmake {cmake_args} -DVIRTUAL_ENV={self.env} {ext.sourcedir};make -j8 install;pwd")
 
 
 setup(

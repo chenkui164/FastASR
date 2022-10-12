@@ -27,10 +27,11 @@ else()
     target_include_directories(fastasr PUBLIC "/usr/local/opt/openblas/include")
     target_link_directories(fastasr PUBLIC "/usr/local/opt/openblas/lib")
 
-    target_include_directories(fastasr PUBLIC "/usr/include/openblas")
     target_include_directories(fastasr PUBLIC "/usr/include")
     target_link_directories(fastasr PUBLIC "/usr/lib64")
 
+    target_include_directories(fastasr PUBLIC ${OPENBLAS_INCLUDE_DIR})
+    target_link_directories(fastasr PUBLIC ${OPENBLAS_LIBRARY_DIR})
 endif()
 
 

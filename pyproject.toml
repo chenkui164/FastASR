@@ -1,3 +1,3 @@
 [build-system]
-requires = ["setuptools","cmake>=3.11.0,<4.0.0"]
+requires = ["setuptools","cmake>=3.11.0,<4.0.0","pythran-openblas"]
 build-backend = "setuptools.build_meta"
