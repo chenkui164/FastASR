@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, windows-2019]
+        os: [ubuntu-20.04]
 
     steps:
     - uses: actions/checkout@v3
@@ -20,18 +20,17 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: brew uninstall libomp
-      if: matrix.os == 'macos-11'
-      run: |
-        brew uninstall --ignore-dependencies libomp
-
     - name: Build wheels
       uses: pypa/cibuildwheel@v2.8.1
       env:
         CIBW_BUILD_FRONTEND: "build"
-        CIBW_ARCHS_MACOS: x86_64 universal2 arm64
-        CIBW_ARCHS_LINUX: x86_64 i686
+        # CIBW_ARCHS_MACOS: x86_64 universal2 arm64
+        # CIBW_ARCHS_LINUX: x86_64 i686
         CIBW_BEFORE_BUILD: yum -y install fftw-devel
+        CIBW_SKIP: pp*
+        CIBW_SKIP: pp*
+        CIBW_BUILD: *-manylinux_x86_64
+        CIBW_BUILD: *-manylinux_i686
 
     - name: Show files
       run: ls -lh wheelhouse
