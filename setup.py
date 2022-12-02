@@ -4,7 +4,9 @@ from setuptools.command.build_ext import build_ext
 from setuptools import find_packages
 from pathlib import Path
 import platform
-import pythran_openblas as openblas
+import pylib_openblas as openblas
+import pylib_fftw3f as fftw3f
+import glob
 
 
 requirements = []
@@ -40,11 +42,20 @@ class CMakeBuild(build_ext):
         print('***************************')
         # print(' openblas.include_dirs is {}'.format(openblas.include_dirs[0]))
         # print(' openblas.library_dir is {}'.format(openblas.library_dir))
+        openblas_home = Path(openblas.library_dir).parent.absolute()
+        openblas_lib = glob.glob(os.path.join(openblas_home, 'lib*'))[0]
+        openblas_bin = os.path.join(openblas_home, 'bin')
+        openblas_include = openblas.include_dir
+        fftw3f_include = fftw3f.include_dir[0]
+        fftw3f_lib = fftw3f.library_dir
 
         cmake_args = "-DFASTASR_BUILD_PYTHON_MODULE=ON"
         cmake_args += f" -DCMAKE_INSTALL_PREFIX={Path(self.build_lib).resolve()}"
-        cmake_args += f" -DOPENBLAS_INCLUDE_DIR={openblas.include_dirs[0]}"
-        cmake_args += f" -DOPENBLAS_LIBRARY_DIR={openblas.library_dir}"
+        cmake_args += f" -DOPENBLAS_INCLUDE_DIR={openblas_include}"
+        cmake_args += f" -DOPENBLAS_LIBRARY_DIR={openblas_lib}"
+        cmake_args += f" -DOPENBLAS_BIN_DIR={openblas_bin}"
+        cmake_args += f" -DFFTW3F_INCLUDE_DIR={fftw3f_include}"
+        cmake_args += f" -DFFTW3F_LIBRARY_DIR={fftw3f_lib}"
 
         os.makedirs(self.build_temp, exist_ok=True)
         os.makedirs(self.build_lib, exist_ok=True)

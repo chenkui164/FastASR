@@ -10,14 +10,19 @@ set(files ${files1} ${files2} ${files3})
 add_library(fastasr ${files})
 
 if(WIN32)
-    if(CMAKE_CL_64)
-        link_directories(${CMAKE_SOURCE_DIR}/win/lib/x64)
+    if(FASTASR_BUILD_PYTHON_MODULE)
+        set(EXTRA_LIBS fftw3f libopenblas webrtcvad)
+        target_include_directories(fastasr PUBLIC ${OPENBLAS_INCLUDE_DIR} ${FFTW3F_INCLUDE_DIR})
+        target_link_directories(fastasr PUBLIC ${OPENBLAS_LIBRARY_DIR} ${FFTW3F_LIBRARY_DIR})
     else()
-        link_directories(${CMAKE_SOURCE_DIR}/win/lib/x86)
+        set(EXTRA_LIBS libfftw3f-3 libopenblas webrtcvad)
+        if(CMAKE_CL_64)
+            target_link_directories(fastasr PUBLIC ${CMAKE_SOURCE_DIR}/win/lib/x64)
+        else()
+            target_link_directories(fastasr PUBLIC ${CMAKE_SOURCE_DIR}/win/lib/x86)
+        endif()
+        target_include_directories(fastasr PUBLIC ${CMAKE_SOURCE_DIR}/win/include ${CMAKE_SOURCE_DIR}/win/include/openblas)
     endif()
-
-    include_directories(${CMAKE_SOURCE_DIR}/win/include ${CMAKE_SOURCE_DIR}/win/include/openblas )
-    set(EXTRA_LIBS libfftw3f-3 libopenblas webrtcvad)
 else()
 
     set(EXTRA_LIBS fftw3f openblas webrtcvad pthread)
@@ -30,8 +35,9 @@ else()
     target_include_directories(fastasr PUBLIC "/usr/include")
     target_link_directories(fastasr PUBLIC "/usr/lib64")
 
-    target_include_directories(fastasr PUBLIC ${OPENBLAS_INCLUDE_DIR})
-    target_link_directories(fastasr PUBLIC ${OPENBLAS_LIBRARY_DIR})
+    target_include_directories(fastasr PUBLIC ${OPENBLAS_INCLUDE_DIR} ${FFTW3F_INCLUDE_DIR})
+    target_link_directories(fastasr PUBLIC ${OPENBLAS_LIBRARY_DIR} ${FFTW3F_LIBRARY_DIR})
+
 endif()
 
 

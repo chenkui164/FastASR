@@ -1,15 +1,12 @@
-if(WIN32)
-    if(CMAKE_CL_64)
-        link_directories( ${CMAKE_SOURCE_DIR}/win/lib/x64 )
-        install(FILES  ${CMAKE_SOURCE_DIR}/win/bin/x64/libfftw3f-3.dll DESTINATION .)
-        install(FILES  ${CMAKE_SOURCE_DIR}/win/bin/x64/libopenblas.dll DESTINATION .)
-    else()
-        link_directories( ${CMAKE_SOURCE_DIR}/win/lib/x86 )
-        install(FILES  ${CMAKE_SOURCE_DIR}/win/bin/x86/libfftw3f-3.dll DESTINATION .)
-        install(FILES  ${CMAKE_SOURCE_DIR}/win/bin/x86/libopenblas.dll DESTINATION .)
-    endif()
-endif()
-include_directories(${CMAKE_SOURCE_DIR}/include)
+
 pybind11_add_module(_fastasr PyFastASR.cpp)
+target_include_directories(_fastasr PUBLIC ${CMAKE_SOURCE_DIR}/include)
+
+if(WIN32)
+    target_link_directories(_fastasr PUBLIC ${OPENBLAS_LIBRARY_DIR} ${FFTW3F_LIBRARY_DIR})
+    install(FILES  ${OPENBLAS_BIN_DIR}/libopenblas.dll DESTINATION .)
+endif()
+
+
 target_link_libraries(_fastasr PUBLIC fastasr)
 install(TARGETS _fastasr DESTINATION .)
