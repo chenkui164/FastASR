@@ -46,6 +46,8 @@ class CMakeBuild(build_ext):
         openblas_lib = glob.glob(os.path.join(openblas_home, 'lib*'))[0]
         openblas_bin = os.path.join(openblas_home, 'bin')
         openblas_bin = openblas_bin.replace("\\", "\\\\")
+        python_root = sys.exec_prefix
+        print(python_root)
         print((openblas_bin))
         print('openblas_lib is {}'.format(openblas_lib))
         print('openblas_home is {}'.format(openblas_home))
@@ -75,7 +77,7 @@ class CMakeBuild(build_ext):
 
         if is_windows():
             ret = os.system(
-                f"cmake {cmake_args} -A Win32 -B {self.build_temp} -S {ext.sourcedir}"
+                f"cmake {cmake_args} -DPython_ROOT_DIR={python_root} -A Win32 -B {self.build_temp} -S {ext.sourcedir}"
             )
             if ret != 0:
                 raise Exception("Failed to configure")
