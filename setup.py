@@ -75,7 +75,7 @@ class CMakeBuild(build_ext):
 
         if is_windows():
             ret = os.system(
-                f"cmake {cmake_args} -A {Win32} -B {self.build_temp} -S {ext.sourcedir}"
+                f"cmake {cmake_args} -A Win32 -B {self.build_temp} -S {ext.sourcedir}"
             )
             if ret != 0:
                 raise Exception("Failed to configure")
