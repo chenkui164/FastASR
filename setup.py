@@ -95,7 +95,7 @@ class CMakeBuild(build_ext):
 
 setup(
     name='fastasr',
-    version='0.0.1',
+    version='0.0.2',
     python_requires='>=3.6',
     install_requires=requirements,
     package_dir={"fastasr": "src/python/fastasr"},
