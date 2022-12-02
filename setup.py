@@ -45,6 +45,8 @@ class CMakeBuild(build_ext):
         openblas_home = Path(openblas.library_dir).parent.absolute()
         openblas_lib = glob.glob(os.path.join(openblas_home, 'lib*'))[0]
         openblas_bin = os.path.join(openblas_home, 'bin')
+        openblas_bin=openblas_bin.replace("\\","\\\\")
+        print((openblas_bin))
         openblas_include = openblas.include_dir
         fftw3f_include = fftw3f.include_dir[0]
         fftw3f_lib = fftw3f.library_dir
