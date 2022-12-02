@@ -45,13 +45,22 @@ class CMakeBuild(build_ext):
         openblas_home = Path(openblas.library_dir).parent.absolute()
         openblas_lib = glob.glob(os.path.join(openblas_home, 'lib*'))[0]
         openblas_bin = os.path.join(openblas_home, 'bin')
-        openblas_bin=openblas_bin.replace("\\","\\\\")
+        openblas_bin = openblas_bin.replace("\\", "\\\\")
         print((openblas_bin))
         print('openblas_lib is {}'.format(openblas_lib))
         print('openblas_home is {}'.format(openblas_home))
         openblas_include = openblas.include_dir
         fftw3f_include = fftw3f.include_dir[0]
         fftw3f_lib = fftw3f.library_dir
+
+        ret = os.system(
+            f"dir {openblas_lib}"
+        )
+
+        ret = os.system(
+            f"dir {fftw3f_lib}"
+        )
+        print('***************************')
 
         cmake_args = "-DFASTASR_BUILD_PYTHON_MODULE=ON"
         cmake_args += f" -DCMAKE_INSTALL_PREFIX={Path(self.build_lib).resolve()}"
