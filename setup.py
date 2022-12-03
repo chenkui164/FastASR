@@ -48,8 +48,10 @@ class CMakeBuild(build_ext):
         openblas_bin = os.path.join(openblas_home, 'bin')
         openblas_bin = openblas_bin.replace("\\", "\\\\")
         python_root = sys.exec_prefix
-        print(python_root)
-        print((openblas_bin))
+        python_exe = sys.executable
+        print('python_root is {}'.format(python_root))
+        print('python_exe is {}'.format(python_exe))
+        print('openblas_bin is {}'.format(openblas_bin))
         print('openblas_lib is {}'.format(openblas_lib))
         print('openblas_home is {}'.format(openblas_home))
         openblas_include = openblas.include_dir
