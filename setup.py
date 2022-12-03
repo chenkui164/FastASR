@@ -74,13 +74,14 @@ class CMakeBuild(build_ext):
         cmake_args += f" -DOPENBLAS_BIN_DIR={openblas_bin}"
         cmake_args += f" -DFFTW3F_INCLUDE_DIR={fftw3f_include}"
         cmake_args += f" -DFFTW3F_LIBRARY_DIR={fftw3f_lib}"
+        cmake_args += f" -DPYTHON_EXECUTABLE={python_exe}"
 
         os.makedirs(self.build_temp, exist_ok=True)
         os.makedirs(self.build_lib, exist_ok=True)
 
         if is_windows():
             ret = os.system(
-                f"cmake {cmake_args} -DPython_ROOT_DIR={python_root} -A Win32 -B {self.build_temp} -S {ext.sourcedir}"
+                f"cmake {cmake_args} -A Win32 -B {self.build_temp} -S {ext.sourcedir}"
             )
             if ret != 0:
                 raise Exception("Failed to configure")
