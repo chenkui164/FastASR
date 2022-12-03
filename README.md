@@ -492,7 +492,7 @@ Model inference takes 4.916471s.
 
 ### 添加标点符号
 
-由于ＡＳＲ模型并不能处理语音中的停顿，无法直接输出标点符号，需要使用ＮＬＰ方式添加标点符号，参见 ： https://github.com/yeyupiaoling/PunctuationModel
+由于ASR模型并不能处理语音中的停顿，无法直接输出标点符号，需要使用ＮＬＰ方式添加标点符号，参见 ： https://github.com/yeyupiaoling/PunctuationModel
 
 相关研究方法： https://blog.csdn.net/LJJ_12/article/details/120077119
 
