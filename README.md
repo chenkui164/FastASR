@@ -39,7 +39,26 @@ conformer_online_wenetspeech-zh-16k属于流式模型。
 ### 未完成工作
 * 量化和压缩模型
 
-## 快速上手
+## python安装
+
+目前fastasr在个平台的支持情况如下表, 其他未支持的平台可通过源码编译获得对应的whl包。
+
+|   | macOS Intel | Windows 64bit | Windows 32bit | Linux x86 | Linux x64 | Linux aarch64 |
+|---------------|----|-----|-----|----|-----|----|
+| CPython 3.6   | ✅ | ✅  | ✅  | ✅ | ✅  | ✅ |
+| CPython 3.7   | ✅ | ✅  | ✅  | ✅ | ✅  | ✅ |
+| CPython 3.8   | ✅ | ✅  | ✅  | ✅ | ✅  | ✅ |
+| CPython 3.9   | ✅ | ✅  | ✅  | ✅ | ✅  | ✅ |
+| CPython 3.10  | ✅ | ✅  | ✅  | ✅ | ✅  | ✅ |
+| CPython 3.11  | ✅ | ✅  | ✅  | ✅ | ✅  | ✅ |
+
+可通过pip直接安装
+```
+pip install fastasr
+```
+
+
+## 源码编译安装指南
 ### Ubuntu 安装依赖
 
 安装依赖库libfftw3
@@ -80,14 +99,11 @@ cd build
 cmake ..
 make
 ```
-编译python模块，PyFastASR.XXX。项目默认配置环境下并不编译python模块, 需要手动开启
+编译python的whl安装包
 
 ```shell
 cd FastASR/
-mkdir build
-cd build
-cmake -DFASTASR_BUILD_PYTHON_MODULE=ON ..
-make
+python -m build
 ```
 
 ####  Build for Windows
@@ -231,15 +247,10 @@ Result: "听众朋友您下面将要听到的是世界文学宝库中的珍品�
 Model inference takes 186.848961s.
 ```
 
-PyFastASR.XXX模块测试
-添加PyFastASR.XXX模块的路径
+python wheel包测试
 
 ```shell
-export PYTHONPATH=/home/xxx/xxxx/FastASR/build/lib/:$PYTHONPATH
-```
-
-```shell
-python ./build/examples/k2_rnnt2_cli.py models/k2_rnnt2_cli/ zh.wav
+python examples/k2_rnnt2_cli.py models/k2_rnnt2_cli/ zh.wav
 ```
 
 程序输出
@@ -291,10 +302,10 @@ Result: "听众朋友您下面将要听到的是世界文学宝库中珍品海�
 Model inference takes 351.067497s.
 ```
 
-PyFastASR.XXX模块测试
+python wheel包测试
 
 ```shell
-python ./build/examples/paddlespeech_cli.py models/paddlespeech_cli/ zh.wav
+python examples/paddlespeech_cli.py models/paddlespeech_cli/ zh.wav
 ```
 
 程序输出
@@ -380,10 +391,10 @@ final result: "我认为跑步最重要的就是给我带来了身体健康"
 Model inference takes 1.657996s.
 ```
 
-PyFastASR.XXX模块测试
 
+python wheel包测试
 ```shell
-python ./build/examples/paddlespeech_stream.py paddlespeech_stream/ zh.wav
+python examples/paddlespeech_stream.py paddlespeech_stream/ zh.wav
 ```
 
 ## 树莓派4B上优化部署
@@ -452,7 +463,7 @@ sudo make PREFIX=/usr install
 ```
 
 ### 编译和测试
-编译和下载预训练模型的过程，请参考上文的<a href="#%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B"> 快速上手</a>章节。
+编译和下载预训练模型的过程，请参考上文的<a href="#%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85%E6%8C%87%E5%8D%97"> 源码编译安装指南</a>章节。
 
 运行程序
 ```shell
