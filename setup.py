@@ -80,8 +80,14 @@ class CMakeBuild(build_ext):
         os.makedirs(self.build_lib, exist_ok=True)
 
         if is_windows():
+            import platform as plat
+
+            arch = 'x64'
+            if plat.architecture()[0] == '32bit':
+                arch = 'Win32'
+
             ret = os.system(
-                f"cmake {cmake_args} -A Win32 -B {self.build_temp} -S {ext.sourcedir}"
+                f"cmake {cmake_args} -A {arch} -B {self.build_temp} -S {ext.sourcedir}"
             )
             if ret != 0:
                 raise Exception("Failed to configure")
