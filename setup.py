@@ -128,6 +128,7 @@ setup(
     version='0.0.2',
     python_requires='>=3.6',
     install_requires=requirements,
+    description="FastASR",
     long_description=get_readme(),
     long_description_content_type='text/markdown',
     url="https://github.com/chenkui164/FastASR",
@@ -136,5 +137,4 @@ setup(
     packages=["fastasr"],
     ext_modules=[CMakeExtension("cmake_example")],
     cmdclass={"build_ext": CMakeBuild},
-
 )
