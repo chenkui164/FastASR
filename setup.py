@@ -17,6 +17,13 @@ def is_windows():
     return platform.system() == "Windows"
 
 
+def get_readme():
+    readme_path = 'README.md'
+    with open(readme_path, 'r') as f:
+        readme = f.read()
+    return readme
+
+
 class CMakeExtension(Extension):
     def __init__(self, name, sourcedir=""):
         Extension.__init__(self, name, sources=[])
@@ -121,9 +128,13 @@ setup(
     version='0.0.2',
     python_requires='>=3.6',
     install_requires=requirements,
+    description="FastASR",
+    long_description=get_readme(),
+    long_description_content_type='text/markdown',
+    url="https://github.com/chenkui164/FastASR",
+    license='Apache-2.0',
     package_dir={"fastasr": "src/python/fastasr"},
     packages=["fastasr"],
     ext_modules=[CMakeExtension("cmake_example")],
     cmdclass={"build_ext": CMakeBuild},
-
 )
