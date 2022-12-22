@@ -13,6 +13,7 @@ ModelParamsHelper::ModelParamsHelper(const char *path, int vocab_size)
 
 ModelParamsHelper::~ModelParamsHelper()
 {
+    aligned_free(params_addr);
 }
 
 float *ModelParamsHelper::get_addr(int num)

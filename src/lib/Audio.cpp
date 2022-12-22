@@ -159,6 +159,11 @@ int Audio::fetch_chunck(float *&dout, int len)
     } else if (offset == speech_align_len - len) {
         dout = speech_data + offset;
         offset = speech_align_len;
+        // 临时解决 
+        AudioFrame *frame = frame_queue.front();
+        frame_queue.pop();
+        delete frame;
+
         return S_END;
     } else {
         dout = speech_data + offset;

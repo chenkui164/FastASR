@@ -152,8 +152,11 @@ void ConvModule::forward_mode1(Tensor<float> *din)
                     blasin.buff, 15, params->depthwise_conv_weight + i * 15, 1,
                     1, din->buff + i, 512);
     }
-    int t_offset = (mm - 14) * 512;
-    memcpy(conv_cache->buff, tmp_din.buff + t_offset, 14 * 512 * sizeof(float));
+    if (mm >= 14)
+    {
+        int t_offset = (mm - 14) * 512;
+        memcpy(conv_cache->buff, tmp_din.buff + t_offset, 14 * 512 * sizeof(float));
+    }
 
     norm->forward(din);
     swish(din);

@@ -148,6 +148,7 @@ void EmbedLayer::conv1_forward(Tensor<float> *&din)
                     1, blas_in.buff, 9, sub_weight, 32, 1, blas_out.buff, 32);
     }
 
+    free(conv_idxs);
     delete din;
     din = new Tensor<float>(32, conv_row, conv_column);
 
@@ -197,6 +198,7 @@ void EmbedLayer::conv2_forward(Tensor<float> *&din)
                     9, 1, blas_in.buff, 9, sub_weight, 128, 1, blas_out.buff,
                     128);
     }
+    free(conv_idxs);
 
     delete din;
     din = new Tensor<float>(conv_row, 128, conv_column);

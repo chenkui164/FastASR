@@ -40,6 +40,7 @@ int main(int argc, char *argv[])
     string msg = mm->rescoring();
     gettimeofday(&end, NULL);
     cout << "Final Result: \"" << msg << "\"." << endl;
+    delete mm;
 
     seconds = (end.tv_sec - start.tv_sec);
     micros = ((seconds * 1000000) + end.tv_usec) - (start.tv_usec);

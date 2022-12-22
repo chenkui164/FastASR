@@ -25,7 +25,6 @@ void Decoder::forward(int *hyps, Tensor<float> *&dout)
                512 * sizeof(float));
     }
 
-    dout = new Tensor<float>(1, 512);
 
     for (i = 0; i < 512; i++) {
         int ii = i;

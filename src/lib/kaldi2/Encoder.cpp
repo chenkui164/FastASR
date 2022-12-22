@@ -23,6 +23,11 @@ Encoder::Encoder(EncoderParams *params, PositionEncoding *pos_enc, int mode)
 Encoder::~Encoder()
 {
     delete embed;
+
+    int i;
+    for (i = 0; i < 12; i++) {
+        delete subencoder[i];
+    }
 }
 
 void Encoder::reset()
@@ -39,4 +44,5 @@ void Encoder::forward(Tensor<float> *&din)
     for (i = 0; i < 12; i++) {
         subencoder[i]->forward(din, pe_code);
     }
+    delete pe_code;
 }

@@ -34,6 +34,14 @@ ModelImp::ModelImp(const char *path, int mode)
 
 ModelImp::~ModelImp()
 {
+
+   delete vocab;
+   delete fe;
+   delete p_helper;
+   delete pos_enc ;
+   delete encoder ;
+   delete joiner ;
+   delete decoder;
 }
 
 void ModelImp::reset()
@@ -47,7 +55,7 @@ string ModelImp::greedy_search(Tensor<float> *&encoder_out)
     vector<int> hyps = {0, 0};
     hyps.reserve(200);
 
-    Tensor<float> *decoder_out;
+    Tensor<float>* decoder_out = new Tensor<float>(1, 512);
     int *hyps_last = &hyps.back() - 1;
 
     decoder->forward(hyps_last, decoder_out);
@@ -73,6 +81,8 @@ string ModelImp::greedy_search(Tensor<float> *&encoder_out)
 
     hyps.erase(hyps.begin());
     hyps.erase(hyps.begin());
+    delete decoder_out;
+    delete encoder_out;
 
     return vocab->vector2string(hyps);
 }

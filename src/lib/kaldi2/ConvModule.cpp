@@ -41,6 +41,8 @@ void ConvModule::reset()
 
 ConvModule::~ConvModule()
 {
+
+    delete conv_cache;
 }
 
 void ConvModule::forward(Tensor<float> *din)
