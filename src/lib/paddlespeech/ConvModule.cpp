@@ -29,6 +29,13 @@ ConvModule::ConvModule(EncConvParams *params, int mode)
     reset();
 }
 
+ConvModule::~ConvModule()
+{
+
+    delete norm;
+    delete conv_cache;
+}
+
 void ConvModule::reset()
 {
     Tensor<float> tmp(14, 1024);
@@ -42,9 +49,6 @@ void ConvModule::reset()
     glu(&tmp, conv_cache);
 }
 
-ConvModule::~ConvModule()
-{
-}
 
 void ConvModule::forward(Tensor<float> *din)
 {

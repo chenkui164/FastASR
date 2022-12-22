@@ -13,6 +13,7 @@ FeatureQueue::FeatureQueue()
 
 FeatureQueue::~FeatureQueue()
 {
+    delete buff;
 }
 
 void FeatureQueue::reinit(int size)

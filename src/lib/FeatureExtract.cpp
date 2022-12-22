@@ -20,6 +20,9 @@ FeatureExtract::FeatureExtract(int mode) : mode(mode)
 
 FeatureExtract::~FeatureExtract()
 {
+    fftwf_free(fft_input);
+    fftwf_free(fft_out);
+    fftwf_destroy_plan(p);
 }
 
 void FeatureExtract::reset()

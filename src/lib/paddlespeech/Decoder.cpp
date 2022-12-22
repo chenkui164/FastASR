@@ -20,6 +20,13 @@ Decoder::Decoder(DecoderParams *params, PositionEncoding *pos_enc,
 
 Decoder::~Decoder()
 {
+
+    delete embed;
+    int i;
+    for (i = 0; i < 6; i++) {
+        delete sub_decoder[i];
+    }
+    delete  norm_after;
 }
 
 void Decoder::forward(Tensor<int> *hyps_pad, Tensor<int> *hyps_mask,

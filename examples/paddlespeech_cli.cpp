@@ -45,6 +45,7 @@ int main(int argc, char *argv[])
     seconds = (end.tv_sec - start.tv_sec);
     micros = ((seconds * 1000000) + end.tv_usec) - (start.tv_usec);
     printf("Model inference takes %lfs.\n", (double)micros / 1000000);
+    delete mm;
 
     return 0;
 }

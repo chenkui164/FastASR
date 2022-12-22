@@ -24,6 +24,17 @@ SubEncoder::SubEncoder(SubEncoderParams *params, int mode) : params(params)
 
 SubEncoder::~SubEncoder()
 {
+
+    delete in_cache;
+    delete norm_macaron;
+    delete norm_mha;
+    delete norm_conv;
+    delete norm_ff;
+    delete norm_final;
+    delete feedforward_macron;
+    delete feedforward;
+    delete self_attn;
+    delete conv_module;
 }
 
 void SubEncoder::reset()

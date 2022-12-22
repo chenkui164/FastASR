@@ -173,6 +173,7 @@ void EmbedLayer::conv1_forward(Tensor<float> *&din)
         int mm = jj * conv_row * 512 + conv_row * kk + ii;
         din->buff[mm] = blas_out.buff[i] > 0 ? blas_out.buff[i] : 0;
     }
+    free(conv_idxs);
 }
 
 void EmbedLayer::linear_out_forward(Tensor<float> *&din)

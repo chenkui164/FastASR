@@ -1,20 +1,20 @@
 #include <cblas.h>
 #include <iostream>
 #include <stdlib.h>
-#include <stdlib.h>
 #include <string.h>
 
+#include "../Tensor.h"
+#include "../util.h"
 #include "Encoder.h"
 #include "FeedForward.h"
 #include "LayerNorm.h"
-#include "../Tensor.h"
-#include "../util.h"
 
 using namespace std;
 using namespace paddlespeech;
 
-Encoder::Encoder(EncoderParams *params, PositionEncoding *pos_enc, int mode)
-    : params(params), pos_enc(pos_enc)
+Encoder::Encoder(EncoderParams* params, PositionEncoding* pos_enc, int mode)
+    : params(params)
+    , pos_enc(pos_enc)
 {
     cache_size = 0;
     embed = new EmbedLayer(&params->embed);
@@ -28,6 +28,13 @@ Encoder::Encoder(EncoderParams *params, PositionEncoding *pos_enc, int mode)
 Encoder::~Encoder()
 {
     delete embed;
+
+    int i;
+    for (i = 0; i < 12; i++) {
+        delete subencoder[i];
+    }
+
+    delete after_norm;
 }
 
 void Encoder::reset()
@@ -40,13 +47,13 @@ void Encoder::reset()
     }
 }
 
-void Encoder::forward(Tensor<float> *&din)
+void Encoder::forward(Tensor<float>*& din)
 {
 
     cache_size += din->size[2];
 
     embed->forward(din);
-    Tensor<float> *pe_code;
+    Tensor<float>* pe_code;
     pos_enc->fetch(cache_size, pe_code);
     int i;
     for (i = 0; i < 12; i++) {

@@ -25,7 +25,9 @@ class AudioWindow {
         out_idx = 1;
         sum = 0;
     };
-    ~AudioWindow(){};
+    ~AudioWindow(){
+        free(window);
+    };
     int put(int val)
     {
         sum = sum + val - window[out_idx];
@@ -282,4 +284,5 @@ void Audio::split()
         frame_queue.push(frame);
         frame = NULL;
     }
+    WebRtcVad_Free(handle);
 }

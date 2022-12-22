@@ -49,6 +49,10 @@ ModelImp::~ModelImp()
     delete encoder;
     delete ctc;
     delete fe;
+    delete vocab;
+    delete pos_enc;
+    delete decoder;
+    delete encoder_out_cache;
     aligned_free(params_addr);
 }
 
@@ -138,6 +142,7 @@ string ModelImp::forward(float *din, int len, int flag)
     encoder->forward(in);
     encoder_out_cache->concat(in, 2);
     ctc->forward(in);
+    delete in;
 
     return rescoring();
 }

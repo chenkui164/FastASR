@@ -6,6 +6,7 @@
 
 class Model {
   public:
+    virtual ~Model(){};
     virtual void reset() = 0;
     virtual std::string forward_chunk(float *din, int len, int flag) = 0;
     virtual std::string forward(float *din, int len, int flag) = 0;

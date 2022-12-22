@@ -13,6 +13,13 @@ SubDecoder::SubDecoder(SubDecoderParams *params) : params(params)
 }
 SubDecoder::~SubDecoder()
 {
+
+    delete self_attn;
+    delete  src_attn ;
+    delete  feedforward ;
+    delete  norm1;
+    delete  norm2;
+    delete  norm3;
 }
 
 void SubDecoder::forward(Tensor<float> *din, Tensor<int> *din_mask,
