@@ -16,6 +16,11 @@ SubEncoder::SubEncoder(SubEncoderParams *params, int size) : params(params)
 
 SubEncoder::~SubEncoder()
 {
+
+    delete norm1;
+    delete self_attn;
+    delete norm2;
+    delete feedforward;
 }
 
 void SubEncoder::reset()

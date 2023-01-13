@@ -26,10 +26,14 @@ Encoder::~Encoder()
 {
 
     free(conv_im2col);
+
+    delete encoders0;
     int i;
     for (i = 0; i < 49; i++) {
         delete encoders[i];
     }
+
+    delete after_norm;
 }
 
 void Encoder::reset()

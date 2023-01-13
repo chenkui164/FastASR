@@ -23,6 +23,12 @@ SubDecoder::SubDecoder(SubDecoderParams *params) : params(params)
 
 SubDecoder::~SubDecoder()
 {
+
+    delete norm1;
+    delete feedforward;
+    delete norm2;
+    delete norm3;
+    delete src_attn;
 }
 
 void SubDecoder::forward_fsmn(Tensor<float> *din, int *conv_im2col)

@@ -40,8 +40,8 @@ void DecoderSrcAttn::forward(Tensor<float> *&din, Tensor<float> *enc)
 {
     int m1 = din->size[2];
     int m2 = enc->size[2];
-    Tensor<float> q = new Tensor<float>(m1, 512);
-    Tensor<float> kv = new Tensor<float>(m2, 1024);
+    Tensor<float> q(m1, 512);
+    Tensor<float> kv(m2, 1024);
 
     linear_forward(din, &q, params->linear_q_weight, params->linear_q_bias);
     linear_forward(enc, &kv, params->linear_kv_weight, params->linear_kv_bias);
@@ -53,7 +53,7 @@ void DecoderSrcAttn::forward(Tensor<float> *&din, Tensor<float> *enc)
     int head_step = 512 / 4;
     int k_offset = 0;
     int v_offset = 512;
-    
+
     int i;
 
     for (i = 0; i < 4; i++) {
@@ -76,8 +76,6 @@ void DecoderSrcAttn::forward(Tensor<float> *&din, Tensor<float> *enc)
                     m2, 1, scores.buff, m2, sub_v, 1024, 1, sub_attn, 512);
     }
 
-    linear_forward(&attnout, din, params->linear_out_weight, params->linear_out_bias);
-
-
-
+    linear_forward(&attnout, din, params->linear_out_weight,
+                   params->linear_out_bias);
 }

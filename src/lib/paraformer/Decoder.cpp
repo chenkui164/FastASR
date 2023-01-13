@@ -29,6 +29,14 @@ Decoder::Decoder(DecoderParams *params) : params(params)
 
 Decoder::~Decoder()
 {
+    int i;
+    for (i = 0; i < 16; i++) {
+        delete sub_decoders[i];
+    }
+
+    delete decoder3_norm;
+    delete feedforward;
+    delete after_norm;
 }
 
 void Decoder::get_conv_im2col(int mm)
@@ -83,5 +91,7 @@ void Decoder::forward(Tensor<float> *&din, Tensor<float> *enc)
         log_softmax(tmp->buff + offset, 8404);
     }
     delete din;
+    free(conv_im2col);
+    conv_im2col = NULL;
     din = tmp;
 }

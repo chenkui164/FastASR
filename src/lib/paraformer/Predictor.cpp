@@ -163,6 +163,7 @@ void Predictor::forward(Tensor<float> *&din)
             offset += 512;
         }
     }
+    free(conv_im2col);
     delete din;
     din = tout;
 }

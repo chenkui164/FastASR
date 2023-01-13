@@ -35,6 +35,12 @@ ModelImp::ModelImp(const char *path, int mode)
 
 ModelImp::~ModelImp()
 {
+    delete fe;
+    delete p_helper;
+    delete encoder;
+    delete predictor;
+    delete decoder;
+    delete vocab;
 }
 
 void ModelImp::reset()
@@ -114,6 +120,7 @@ string ModelImp::forward(float *din, int len, int flag)
     predictor->forward(in);
     decoder->forward(in, &enc_out);
     string result = greedy_search(in);
+    delete in;
 
     return result;
 }

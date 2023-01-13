@@ -19,6 +19,7 @@ FeedForwardDecoder::FeedForwardDecoder(DecoderFeedForwardParams *params)
 
 FeedForwardDecoder::~FeedForwardDecoder()
 {
+    delete norm;
 }
 
 void FeedForwardDecoder::forward(Tensor<float> *din)
