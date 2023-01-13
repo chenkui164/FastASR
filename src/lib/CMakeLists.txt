@@ -2,8 +2,9 @@
 file(GLOB files1 "*.cpp")
 file(GLOB files2 "paddlespeech/*.cpp")
 file(GLOB files3 "kaldi2/*.cpp")
+file(GLOB files4 "paraformer/*.cpp")
 
-set(files ${files1} ${files2} ${files3})
+set(files ${files1} ${files2} ${files3} ${files4})
 
 # message("${files}")
 

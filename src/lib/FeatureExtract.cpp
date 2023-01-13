@@ -48,6 +48,9 @@ void FeatureExtract::fftw_init()
 void FeatureExtract::insert(float *din, int len, int flag)
 {
     const float *window = (const float *)&window_hex;
+    if (mode == 3)
+        window = (const float *)&window_hamm_hex;
+
     int window_size = 400;
     int fft_size = 512;
     int window_shift = 160;
@@ -55,7 +58,7 @@ void FeatureExtract::insert(float *din, int len, int flag)
     speech.load(din, len);
     int i, j;
     float tmp_feature[80];
-    if (mode == 0 || mode == 2) {
+    if (mode == 0 || mode == 2 || mode == 3) {
         int ll = (speech.size() - 400) / 160 + 1;
         fqueue.reinit(ll);
     }

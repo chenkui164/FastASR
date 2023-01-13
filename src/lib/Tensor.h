@@ -3,11 +3,11 @@
 #ifndef TENSOR_H
 #define TENSOR_H
 
-#include <iostream>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
 #include "alignedmem.h"
+#include <iostream>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 
 using namespace std;
 
@@ -30,10 +30,12 @@ template <typename T> class Tensor {
     void zeros();
     void shape();
     void disp();
-    void dump();
+    void dump(const char *mode);
     void concat(Tensor<T> *din, int dim);
     void resize(int a, int b, int c, int d);
     void add(float coe, Tensor<T> *in);
+    void add(Tensor<T> *in);
+    void add(Tensor<T> *in1, Tensor<T> *in2);
     void reload(Tensor<T> *in);
 };
 
@@ -119,6 +121,22 @@ template <typename T> void Tensor<T>::add(float coe, Tensor<T> *in)
     }
 }
 
+template <typename T> void Tensor<T>::add(Tensor<T> *in)
+{
+    int i;
+    for (i = 0; i < buff_size; i++) {
+        buff[i] = buff[i] + in->buff[i];
+    }
+}
+
+template <typename T> void Tensor<T>::add(Tensor<T> *in1, Tensor<T> *in2)
+{
+    int i;
+    for (i = 0; i < buff_size; i++) {
+        buff[i] = buff[i] + in1->buff[i] + in2->buff[i];
+    }
+}
+
 template <typename T> void Tensor<T>::reload(Tensor<T> *in)
 {
     memcpy(buff, in->buff, in->buff_size * sizeof(T));
@@ -133,10 +151,10 @@ template <typename T> void Tensor<T>::disp()
     cout << endl;
 }
 
-template <typename T> void Tensor<T>::dump()
+template <typename T> void Tensor<T>::dump(const char *mode)
 {
     FILE *fp;
-    fp = fopen("tmp.bin", "ab+");
+    fp = fopen("tmp.bin", mode);
     fwrite(buff, 1, buff_size * sizeof(T), fp);
     fclose(fp);
 }

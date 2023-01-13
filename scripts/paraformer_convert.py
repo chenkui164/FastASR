@@ -48,10 +48,13 @@ def encoder(prefix, model, wfid):
     a = model['{}.self_attn.linear_out.weight'.format(prefix)]
     a = alignment(a.numpy(), 32.0)
     wfid.write(a.tobytes())
+    scale = 128**(-0.5)
     a = model['{}.self_attn.linear_q_k_v.bias'.format(prefix)]
+    a[0:512][:] = scale * a[0:512][:]
     a = alignment(a.numpy(), 32.0)
     wfid.write(a.tobytes())
     a = model['{}.self_attn.linear_q_k_v.weight'.format(prefix)]
+    a[0:512] = scale * a[0:512]
     a = alignment(a.numpy(), 32.0)
     wfid.write(a.tobytes())
 
@@ -121,11 +124,14 @@ def decoder(prefix, model, wfid):
     a = alignment(a.numpy(), 32.0)
     wfid.write(a.tobytes())
 
+    scale = 128**(-0.5)
     a = model['{}.src_attn.linear_q.bias'.format(prefix)]
+    a = scale * a
     a = alignment(a.numpy(), 32.0)
     wfid.write(a.tobytes())
 
     a = model['{}.src_attn.linear_q.weight'.format(prefix)]
+    a = scale * a
     a = alignment(a.numpy(), 32.0)
     wfid.write(a.tobytes())
 
@@ -152,6 +158,7 @@ a = alignment(a.numpy(), 32.0)
 wfid.write(a.tobytes())
 
 a = model['predictor.cif_conv1d.weight']
+a = torch.permute(a, (1, 0, 2))
 a = alignment(a.numpy(), 32.0)
 wfid.write(a.tobytes())
 

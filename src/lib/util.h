@@ -12,6 +12,7 @@ extern float *loadparams(const char *filename);
 extern void SaveDataFile(const char *filename, void *data, uint32_t len);
 extern void relu(Tensor<float> *din);
 extern void swish(Tensor<float> *din);
+extern void sigmoid(Tensor<float> *din);
 extern void doubleswish(Tensor<float> *din);
 
 extern void softmax(float *din, int mask, int len);

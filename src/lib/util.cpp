@@ -111,6 +111,15 @@ void swish(Tensor<float> *din)
     }
 }
 
+void sigmoid(Tensor<float> *din)
+{
+    int i;
+    for (i = 0; i < din->buff_size; i++) {
+        float val = din->buff[i];
+        din->buff[i] = 1 / (1 + exp(-val));
+    }
+}
+
 void doubleswish(Tensor<float> *din)
 {
     int i;
@@ -130,7 +139,6 @@ void softmax(float *din, int mask, int len)
     for (i = 0; i < mask; i++) {
         max = max < din[i] ? din[i] : max;
     }
-    max = max * 0.9;
 
     for (i = 0; i < mask; i++) {
         tmp[i] = exp(din[i] - max);

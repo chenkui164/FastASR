@@ -20,6 +20,9 @@ target_link_libraries(paddlespeech_cli PUBLIC ${EXTRA_LIBS})
 add_executable(k2_rnnt2_cli k2_rnnt2_cli.cpp)
 target_link_libraries(k2_rnnt2_cli PUBLIC ${EXTRA_LIBS})
 
+add_executable(paraformer_cli paraformer_cli.cpp)
+target_link_libraries(paraformer_cli PUBLIC ${EXTRA_LIBS})
+
 add_executable(paddlespeech_stream paddlespeech_stream.cpp)
 target_link_libraries(paddlespeech_stream PUBLIC ${EXTRA_LIBS})
 
