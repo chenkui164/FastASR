@@ -115,6 +115,30 @@ python -m build
 
 ### 下载预训练模型
 
+#### paraformer预训练模型下载
+
+进入FastASR/models/paraformer_cli文件夹，用于存放下载的预训练模型.
+```shell
+cd ../models/paraformer_cli
+```
+从modelscope官网下载预训练模型，预训练模型所在的[仓库地址](https://modelscope.cn/models/damo/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-pytorch/files)
+也可通过命令一键下载。
+
+```shell
+wget --user-agent="Mozilla/5.0" -c "https://www.modelscope.cn/api/v1/models/damo/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-pytorch/repo?Revision=v1.0.4&FilePath=model.pb"
+```
+
+将用于Python的模型转换为C++的，这样更方便通过内存映射的方式直接读取参数，加快模型读取速度。
+
+```shell
+../scripts/paraformer_convert.py model.pb
+```
+查看转换后的参数文件wenet_params.bin的md5码，md5码为c77bc27e5758ebdc28a9024460e48602，表示转换正确。
+
+```
+md5sum -b wenet_params.bin
+```
+
 #### k2_rnnt2预训练模型下载
 
 进入FastASR/models/k2_rnnt2_cli文件夹，用于存放下载的预训练模型.
@@ -207,6 +231,44 @@ wget -c https://paddlespeech.bj.bcebos.com/PaddleAudio/zh.wav
 
 ```shell
 wget -c https://github.com/chenkui164/FastASR/releases/download/V0.01/long.wav
+```
+
+#### paraformer模型测试
+
+第一个参数为预训练模型存放的目录;  
+第二个参数为需要识别的语音文件。
+
+```shell
+./build/examples/paraformer_cli models/paraformer_cli/ zh.wav
+```
+
+程序输出
+```
+Audio time is 4.996812 s. len is 79949
+Model initialization takes 0.319781s.
+Result: "我认为跑步最重要的就是给我带来了身体健康".
+Model inference takes 0.695871s.
+```
+
+长语音测试
+
+```shell
+./build/examples/k2_rnnt2_cli models/k2_rnnt2_cli/ long.wav
+```
+
+程序输出
+```
+Audio time is 1781.655518 s. len is 28506489
+Model initialization takes 0.283899s.
+Result: "听众朋友您下面将要听到的是世界文学宝库中的珍品海明威最优秀的作品老人与海
+................................................................................
+................................................................................
+................................................................................
+那么祝你晚安早上我去叫醒你你是我的闹钟男孩说呵呵年纪是我的闹钟老人说为什么老头醒
+醒那么早啊难道是要让白白长一些吗我不知道我只知道少年睡得沉起得晚嗯我记在心上了到
+时候会去叫醒你的我不愿让船主人来叫醒我这样似乎我比他差劲儿了自我懂安睡吧老大爷男
+孩儿走出屋去"
+Model inference takes 238.797095s.
 ```
 #### k2_rnnt2模型测试
 
