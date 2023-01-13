@@ -126,6 +126,8 @@ cd ../models/paraformer_cli
 
 ```shell
 wget --user-agent="Mozilla/5.0" -c "https://www.modelscope.cn/api/v1/models/damo/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-pytorch/repo?Revision=v1.0.4&FilePath=model.pb"
+
+mv repo\?Revision\=v1.0.4\&FilePath\=model.pb model.pb 
 ```
 
 将用于Python的模型转换为C++的，这样更方便通过内存映射的方式直接读取参数，加快模型读取速度。
