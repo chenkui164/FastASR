@@ -112,7 +112,7 @@ void Predictor::forward(Tensor<float> *&din)
 
     sigmoid(&alphas);
 
-    float fires[mm];
+    float *fires = new float[mm];
     float intergrate = 0;
     Tensor<float> frame(512);
     frame.zeros();
@@ -165,5 +165,6 @@ void Predictor::forward(Tensor<float> *&din)
     }
     free(conv_im2col);
     delete din;
+    delete fires;
     din = tout;
 }
