@@ -6,7 +6,6 @@ project(FastASR)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-message("${VIRTUAL_ENV}")
 option(FASTASR_BUILD_PYTHON_MODULE "build python module, using FastASR in Python" OFF)
 
 if(FASTASR_BUILD_PYTHON_MODULE)
