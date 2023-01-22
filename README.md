@@ -1,25 +1,27 @@
 # FastASR
 
 这是一个用C++实现ASR推理的项目，它依赖很少，安装也很简单，推理速度很快，在树莓派4B等ARM平台也可以流畅的运行。
-推理模型是基于目前最先进的conformer模型，使用10000+小时的wenetspeech数据集训练得到， 所以识别效果也很好，可以媲美许多商用的ASR软件。
+支持的模型是由Google的Transformer模型中优化而来，数据集是开源wenetspeech(10000+小时)或阿里私有数据集(60000+小时)， 所以识别效果也很好，可以媲美许多商用的ASR软件。
 
 ## 项目简介
 
-目前本项目实现了3个模型，它们是PaddleSpeech [r1.01版本](https://github.com/PaddlePaddle/PaddleSpeech/releases/tag/r1.0.1)中conformer_wenetspeech-zh-16k和conformer_online_wenetspeech-zh-16k
-，以及[kaidi2](https://github.com/k2-fsa/icefall/tree/master/egs/wenetspeech/ASR)的rnnt2。
+目前本项目实现了4个模型，3个非流式模型，1个流式模型，如下表所示。
+|       名称       |                                                            来源                                                            |        数据集       |                 模型                |  语言 |
+|:----------------:|:--------------------------------------------------------------------------------------------------------------------------:|:-------------------:|:-----------------------------------:|:-----:|
+|    paraformer    | [阿里达摩院](https://modelscope.cn/models/damo/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-pytorch/summary) |  私有数据集(60000h) |           Paraformer-large          | zh+en |
+|     k2_rnnt2     |                         [kaidi2](https://github.com/k2-fsa/icefall/tree/master/egs/wenetspeech/ASR)                        | WenetSpeech(10000h) |     pruned_transducer_stateless2    |   zh  |
+|     conformer    |                      [paddlespeech](https://github.com/PaddlePaddle/PaddleSpeech/releases/tag/r1.0.1)                      | WenetSpeech(10000h) |     conformer_wenetspeech-zh-16k    |   zh  |
+| conformer_online |                      [paddlespeech](https://github.com/PaddlePaddle/PaddleSpeech/releases/tag/r1.0.1)                      | WenetSpeech(10000h) | conformer_online_wenetspeech-zh-16k |   zh  |
+
 
 * **非流式模型**：每次识别是以句子为单位，所以实时性会差一些，但准确率会高一些。
 * **流式模型**：模型的输入是语音流，并实时返回语音识别的结果，但是准确率会下降些。  
 
-k2_rnnt2和conformer_wenetspeech-zh-16k是属于非流式模型，
-conformer_online_wenetspeech-zh-16k属于流式模型。
-
+conformer_online是流式模型，其它模型为非流式模型。
 目前通过使用VAD技术, 非流式模型支持大段的长语音识别。
-
 
 上面提到的这些模型都是基于深度学习框架（paddlepaddle或pytorch）实现的, 本身的性能已经很不错了，即使在没有GPU的个人电脑上运行，
 也能满足实时性的要求（如:时长为10s的语音，推理时间小于10s，即可满足实时性）。
-
 
 但是要把深度学习模型部署在ARM平台，会遇到两个方面的困难。
 * 不容易安装，需要自己编译一些组件。
