@@ -113,7 +113,7 @@ class CMakeBuild(build_ext):
         else:
             ret = os.system("echo --------------------------------")
 
-            cmake_args += f"-DCMAKE_BUILD_TYPE=Release"
+            cmake_args += f" -DCMAKE_BUILD_TYPE=Release"
             self.env = os.popen('which python').read()
             self.env = os.path.dirname(self.env)
             self.env = os.path.dirname(self.env)
