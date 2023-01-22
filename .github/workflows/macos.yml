@@ -1,4 +1,4 @@
-name: Build
+name: Build_MacOS
 
 on: [workflow_dispatch]
 
