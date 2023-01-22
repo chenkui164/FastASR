@@ -96,7 +96,7 @@ git clone https://github.com/chenkui164/FastASR.git
 cd FastASR/
 mkdir build
 cd build
-cmake ..
+cmake -DCMAKE_BUILD_TYPE=Release ..
 make
 ```
 编译python的whl安装包
@@ -110,7 +110,7 @@ python -m build
 
 [Windows编译指南](win/readme.md)
 
-使用Visual studio 2022 打开CMakeLists.txt编译即可。
+使用VisualStudio 2022打开CMakeLists.txt，选择Release编译。
 需要在vs2022安装linux开发组件。
 
 ### 下载预训练模型
