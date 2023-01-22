@@ -19,7 +19,7 @@ def is_windows():
 
 def get_readme():
     readme_path = 'README.md'
-    with open(readme_path, 'r') as f:
+    with open(readme_path, encoding="utf8") as f:
         readme = f.read()
     return readme
 
