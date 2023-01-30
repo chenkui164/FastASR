@@ -9,7 +9,7 @@
 |       名称       |                                                            来源                                                            |        数据集       |                 模型                |  语言 |
 |:----------------:|:--------------------------------------------------------------------------------------------------------------------------:|:-------------------:|:-----------------------------------:|:-----:|
 |    paraformer    | [阿里达摩院](https://modelscope.cn/models/damo/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-pytorch/summary) |  私有数据集(60000h) |           Paraformer-large          | zh+en |
-|     k2_rnnt2     |                         [kaidi2](https://github.com/k2-fsa/icefall/tree/master/egs/wenetspeech/ASR)                        | WenetSpeech(10000h) |     pruned_transducer_stateless2    |   zh  |
+|     k2_rnnt2     |                         [kaldi2](https://github.com/k2-fsa/icefall/tree/master/egs/wenetspeech/ASR)                        | WenetSpeech(10000h) |     pruned_transducer_stateless2    |   zh  |
 |     conformer    |                      [paddlespeech](https://github.com/PaddlePaddle/PaddleSpeech/releases/tag/r1.0.1)                      | WenetSpeech(10000h) |     conformer_wenetspeech-zh-16k    |   zh  |
 | conformer_online |                      [paddlespeech](https://github.com/PaddlePaddle/PaddleSpeech/releases/tag/r1.0.1)                      | WenetSpeech(10000h) | conformer_online_wenetspeech-zh-16k |   zh  |
 
