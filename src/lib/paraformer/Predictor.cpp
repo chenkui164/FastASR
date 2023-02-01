@@ -150,17 +150,22 @@ void Predictor::forward(Tensor<float> *&din)
     }
     // printf("sum_alphas is %f\n", sum_alphas);
 
-    int len_labels = round(sum_alphas + 0.45);
-    // printf("len_labels is %d\n", len_labels);
+    // int len_labels = round(sum_alphas + 0.45);
+    int token_num = int(sum_alphas + 0.45);
 
-    Tensor<float> *tout = new Tensor<float>(len_labels, 512);
+    Tensor<float> *tout = new Tensor<float>(token_num, 512);
+    tout->zeros();
 
+    int token_idx = 0;
     offset = 0;
     for (i = 0; i < mm; i++) {
         if (fires[i] >= 1) {
             memcpy(tout->buff + offset, frames.buff + i * 512,
                    512 * sizeof(float));
             offset += 512;
+            token_idx++;
+            if (token_idx == token_num)
+                break;
         }
     }
     free(conv_im2col);
