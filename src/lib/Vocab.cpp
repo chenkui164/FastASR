@@ -82,21 +82,21 @@ string Vocab::vector2stringV2(vector<int> in)
     for (auto it = in.begin(); it != in.end(); it++) {
         string word = vocab[*it];
 
-        // step1 空白字符不处理
+        // step1 space character skips
         if (word == "<s>" || word == "</s>" || word == "<unk>")
             continue;
 
-        // step2 将音素拼成完整的单词
+        // step2 combie phoneme to full word
         {
             int sub_word = !(word.find("@@") == string::npos);
 
-            //处理单词起始和中间部分
+            // process word start and middle part
             if (sub_word) {
                 combine += word.erase(word.length() - 2);
                 is_combining = true;
                 continue;
             }
-            //处理单词结束部分, combine结束
+            // process word end part
             else if (is_combining) {
                 combine += word;
                 is_combining = false;
@@ -105,18 +105,18 @@ string Vocab::vector2stringV2(vector<int> in)
             }
         }
 
-        // step3 处理英文单词，单词之间需要加入空格，缩写转成大写。
+        // step3 process english word deal with space , turn abbreviation to upper case
         {
 
-            //输入是汉字不需要处理
+            // input word is chinese, not need process 
             if (isChinese(word)) {
                 words.push_back(word);
                 is_pre_english = false;
             }
-            //输入是英文单词
+            // input word is english word
             else {
 
-                // 如果前面是汉字，不论当前是多个字母还是单个字母的单词，都不需要加空格
+                // pre word is chinese
                 if (!is_pre_english) {
                     word[0] = word[0] - 32;
                     words.push_back(word);
@@ -124,23 +124,20 @@ string Vocab::vector2stringV2(vector<int> in)
 
                 }
 
-                // 如果前面是单词
+                // pre word is english word
                 else {
 
-                    // 单个字母的单词变大写
+                    // single letter turn to upper case
                     if (word.size() == 1) {
                         word[0] = word[0] - 32;
                     }
 
-                    // 前面单词的长度是大于1的，说明当前输入不属于缩写的部分，需要和前面的单词分割开，加空格
                     if (pre_english_len > 1) {
                         words.push_back(" ");
                         words.push_back(word);
                         pre_english_len = word.size();
                     } 
-                    // 前面单词的长度是等于1，可能是属于缩写
                     else {
-                        // 当前长度大于1, 不可能是缩写，所以需要插入空格
                         if (word.size() > 1) {
                             words.push_back(" ");
                         }
