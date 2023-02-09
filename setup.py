@@ -126,7 +126,7 @@ class CMakeBuild(build_ext):
 
 setup(
     name='fastasr',
-    version='0.0.3',
+    version='0.0.4',
     python_requires='>=3.6',
     install_requires=requirements,
     description="FastASR",
