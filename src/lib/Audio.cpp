@@ -25,7 +25,8 @@ class AudioWindow {
         out_idx = 1;
         sum = 0;
     };
-    ~AudioWindow(){
+    ~AudioWindow()
+    {
         free(window);
     };
     int put(int val)
@@ -159,7 +160,7 @@ int Audio::fetch_chunck(float *&dout, int len)
     } else if (offset == speech_align_len - len) {
         dout = speech_data + offset;
         offset = speech_align_len;
-        // 临时解决 
+        // 临时解决
         AudioFrame *frame = frame_queue.front();
         frame_queue.pop();
         delete frame;
@@ -251,6 +252,7 @@ void Audio::split()
     frame = frame_queue.front();
     frame_queue.pop();
     delete frame;
+    frame = NULL;
 
     while (offset < speech_len - step) {
         int n = WebRtcVad_Process(handle, fs, speech_buff + offset, step);
